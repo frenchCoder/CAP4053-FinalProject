@@ -16,8 +16,11 @@ public class UserShipAgent : MonoBehaviour {
 			give user enough gold to purchase only 1 upgrade
 			done in update: open shop menu for user to purchase item, game timer starts when menu is exited
 		 */
-
+		ship = new Ship ();
 		screenText = "";
+		ship.state = Ship.State.Roaming;
+		//init ship's harbor
+		harbor = GameObject.Find ("Harbor").transform;
 	}
 	
 	// Update is called once per frame
@@ -61,25 +64,29 @@ public class UserShipAgent : MonoBehaviour {
 
 		if (hit.tag.Equals("island"))
 		{
-			/*TODO: island looting trigger
-			if ship not in looting state
-				display text “press space to start looting”
-			if "space" 
-				looting state => roaming
-				roaming state => looting
-			*/
+			if (ship.state != Ship.State.Looting)
+			{
+				screenText = "Press Space to start looting the island \n and get some gold!";
+			}
+
+			if (Input.GetKeyUp(KeyCode.Space))
+			{
+				ship.state = (ship.state == Ship.State.Looting) ? Ship.State.Roaming : Ship.State.Looting;
+			}
 		}
 			
 
-		else if (hit.name.Equals("Harbor"))
+		else if (hit.name.Equals(harbor.name))
 		{
-			/*TODO: harbor shopping trigger
-			if ship not in shopping state
-				display text “press space to drop anchor”
-			if "space" 
-				shopping state => roaming
-				roaming state => shopping
-	 		*/
+			if (ship.state != Ship.State.Shopping)
+			{
+				screenText = "Press Space to enter the harbor, drop off your gold, \n and buy upgrades.";
+			}
+			
+			if (Input.GetKeyUp(KeyCode.Space))
+			{
+				ship.state = (ship.state == Ship.State.Shopping) ? Ship.State.Roaming : Ship.State.Shopping;
+			}
 		}
 	}
 
