@@ -17,6 +17,7 @@ public class MoveAgent : MonoBehaviour {
 	void Update () {
 		
 		//print(transform.up);
+
 		transform.Rotate(Vector3.forward * -Input.GetAxis("Horizontal") * turnSpeed * Time.deltaTime);
 
 		transform.position += transform.up * curShipSpeed * Time.deltaTime;
