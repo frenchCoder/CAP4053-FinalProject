@@ -93,6 +93,7 @@ public class Ship : MonoBehaviour {
 		//TODO: add functionality
 	}
 
+	/*
 	//return true if ship is within range on left side
 	public bool enemyShipOnLeft(int range)
 	{
@@ -104,5 +105,5 @@ public class Ship : MonoBehaviour {
 	{
 		//TODO: add functionality, use adj/pie sensor
 	}
-
+	*/
 }
