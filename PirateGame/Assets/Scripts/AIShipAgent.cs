@@ -45,18 +45,26 @@ public class AIShipAgent : MonoBehaviour {
 
 	void OnTriggerEnter(Collider hit)
 	{
-		print ("hit a trigger");		
 
 		/*TODO: island looting trigger
 			change ship state
 			stay on island given amount of time
 		*/
+		if (hit.tag.Equals("island"))
+		{
+			ship.state = Ship.State.Looting;
+		}
 
 		/*TODO: harbor shopping trigger
 			change ship state
 			take gold from ship to harbor
 			purchase upgrades based on aggressionLevel
 		 */
+		else if (hit.name.Equals(harbor.name))
+		{			
+			ship.state = Ship.State.Roaming;
+
+		}	
 	}
 
 
