@@ -29,11 +29,11 @@ public class UserShipAgent : MonoBehaviour {
 		//move/attack according to user if roaming
 		if (ship.state == Ship.State.Roaming)
 		{
-			transform.Rotate(Vector3.up * Input.GetAxis("Horizontal") * ship.turnSpeed * Time.deltaTime);			
-			transform.position -= transform.forward * ship.curSpeed * Time.deltaTime;
+			transform.Rotate(Vector3.forward * -Input.GetAxis("Horizontal") * turnSpeed * Time.deltaTime);			
+			transform.position += transform.up * curShipSpeed * Time.deltaTime;
 			
-			ship.curSpeed += Input.GetAxis("Vertical") * Time.deltaTime;			
-			ship.curSpeed = Mathf.Clamp(ship.curSpeed, 0.5f, ship.maxSpeed);
+			curShipSpeed += Input.GetAxis("Vertical") * Time.deltaTime;			
+			curShipSpeed = Mathf.Clamp(curShipSpeed, 0.5f, maxShipSpeed);
 
 			//TODO:add keylisteners for attacking
 			//'Q' shoot left cannons
