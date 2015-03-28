@@ -17,17 +17,15 @@ public class MoveAgent : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Debug.DrawRay (transform.position, transform.forward, Color.red);
+
+		transform.Rotate(Vector3.forward * -Input.GetAxis("Horizontal") * turnSpeed * Time.deltaTime);
 		
-		//print(transform.up);
-		transform.Rotate(Vector3.up * Input.GetAxis("Horizontal") * turnSpeed * Time.deltaTime);
-
-
-		transform.position -= transform.forward * curShipSpeed * Time.deltaTime;
+		transform.position += transform.up * curShipSpeed * Time.deltaTime;
 		
 		curShipSpeed += Input.GetAxis("Vertical") * Time.deltaTime;
 		
 		curShipSpeed = Mathf.Clamp(curShipSpeed, 0.5f, maxShipSpeed);
+
 
 	}
 	
