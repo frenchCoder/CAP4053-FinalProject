@@ -8,6 +8,8 @@ public class GUIFunctions : MonoBehaviour {
 	public GameObject maxMessage;
 	public GameObject noLootMessage;
 
+	private string menuText;
+
 	public bool open;
 
 
@@ -17,14 +19,14 @@ public class GUIFunctions : MonoBehaviour {
 		shoppingGUI.SetActive (false);
 		maxMessage.SetActive (false);
 		noLootMessage.SetActive (false);
+		menuText = "";
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if(ship.state == Ship.State.Shopping && !open)
-		{
-			open = true;
+		if(ship.state == Ship.State.Shopping && !open){
 			shoppingGUI.SetActive(true);
+			open = true;
 		}
 	}
 
@@ -47,6 +49,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			ship.goldTotal -= 100;
 			ship.upgrade (Ship.Upgrade.AttackPower);
+			menuText = "Your attack power is now " + ship.leftCannon.attackPower + "!";
 		}
 		
 	}
@@ -69,6 +72,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			ship.goldTotal -= 100;
 			ship.upgrade(Ship.Upgrade.Hp);
+			menuText = "Your hull strength is now " + ship.health + "!";
 		}
 	}
 	
@@ -91,6 +95,29 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			ship.goldTotal -= 100;
 			ship.upgrade(Ship.Upgrade.Speed);
+			menuText = "Your max speed is now " + ship.maxSpeed + "!";
+		}
+	}
+
+	public void CrateUpgrade(){
+		//If the sails are already maxed out or there's
+		//not enough loot to upgrade it, hide the shop GUI
+		//and show the appropriate message.
+		//TODO: change speed value to compare to
+		if (ship.maxGold == 600) {
+			shoppingGUI.SetActive(false);
+			maxMessage.SetActive(true);
+		} 
+		else if (ship.goldTotal < 100) {
+			shoppingGUI.SetActive(false);
+			noLootMessage.SetActive(true);
+		}
+		
+		// Otherwise, upgrade the sails and subtract from loot each time.
+		else {
+			ship.goldTotal -= 100;
+			ship.upgrade(Ship.Upgrade.MaxGold);
+			menuText = "You can now hold " + ship.maxGold + " gold!";
 		}
 	}
 	
@@ -106,6 +133,7 @@ public class GUIFunctions : MonoBehaviour {
 		playerObject.rotation = Quaternion.Euler(temp);
 		playerObject.position += transform.up * ship.curSpeed * Time.deltaTime;
 		ship.state = Ship.State.Roaming;
+		menuText = "";
 		
 		print ("done shopping");
 	}
@@ -116,7 +144,13 @@ public class GUIFunctions : MonoBehaviour {
 		maxMessage.SetActive(false);
 		noLootMessage.SetActive(false);
 		shoppingGUI.SetActive(true);
+		menuText = "";
 
 		open = false;
+	}
+
+	void OnGUI()
+	{
+		GUI.Label (new Rect (300,0,190,800), menuText);
 	}
 }
