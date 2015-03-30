@@ -5,17 +5,11 @@ public class UserShipAgent : MonoBehaviour {
 	
 	public Ship ship;
 	public Transform harbor;
-	public int turnSpeed;
+	public GUIFunctions gui;
 
-	public int loot = 500;
-	public int cannonPower = 1;
-	public int hull = 1;
-	public int sails = 1;
-	public GameObject shoppingGUI;
-	public GameObject maxMessage;
-	public GameObject noLootMessage;
-
+	public Transform island;
 	private string screenText;
+	private Collider curhit;
 
 	// Use this for initialization
 	void Start () 
@@ -26,11 +20,15 @@ public class UserShipAgent : MonoBehaviour {
 			give user enough gold to purchase only 1 upgrade
 			done in update: open shop menu for user to purchase item, game timer starts when menu is exited
 		 */
-		ship = new Ship ();
+		
+		ship = (Ship) this.GetComponent(typeof(Ship));
+		gui = (GUIFunctions)GameObject.Find ("PlayerShip").GetComponent (typeof(GUIFunctions));
+
 		screenText = "";
 		ship.state = Ship.State.Roaming;
 		//init ship's harbor
-		harbor = GameObject.Find ("Harbor").transform;
+		harbor = GameObject.Find ("PlayerHarbor").transform;
+		island = GameObject.Find ("LootIsland").transform;
 	}
 	
 	// Update is called once per frame
@@ -38,34 +36,44 @@ public class UserShipAgent : MonoBehaviour {
 	{
 		//move/attack according to user if roaming
 		if (ship.state == Ship.State.Roaming)
-		{/*
-			transform.Rotate(Vector3.forward * -Input.GetAxis("Horizontal") * turnSpeed * Time.deltaTime);			
-			transform.position += transform.up * curShipSpeed * Time.deltaTime;
+		{
+			transform.Rotate(Vector3.forward * -Input.GetAxis("Horizontal") * ship.turnSpeed * Time.deltaTime);			
+			transform.position += transform.up * ship.curSpeed * Time.deltaTime;
 			
-			curShipSpeed += Input.GetAxis("Vertical") * Time.deltaTime;			
-			curShipSpeed = Mathf.Clamp(curShipSpeed, 0.5f, maxShipSpeed);
+			ship.curSpeed += Input.GetAxis("Vertical") * Time.deltaTime;			
+			ship.curSpeed = Mathf.Clamp(ship.curSpeed, 0.5f, ship.maxSpeed);
 
 			//TODO:add keylisteners for attacking
 			//'Q' shoot left cannons
 			//'E' shoot right rannons */
 
 			//No menus should show when the ship is roaming.
-			shoppingGUI.SetActive(false);
-			maxMessage.SetActive(false);
-			noLootMessage.SetActive(false);
+
 		}
 
 		else if (ship.state == Ship.State.Looting)
-		{ /*
+		{ 
+			//listen for space where user wants to stop and roam again
+			if (Input.GetKeyUp(KeyCode.Space))
+			{
+				Vector3 temp = transform.rotation.eulerAngles;
+				temp.y += 180.0f;
+				transform.rotation = Quaternion.Euler(temp);
+				transform.position += transform.up * ship.curSpeed * Time.deltaTime;
+				ship.state = Ship.State.Roaming;
+
+				print ("done looting");
+			}
 			//TODO
 
 				//display text “press space to stop looting”
 				//ship object handles looting
-			*/
+
 		}
 
 		else if (ship.state == Ship.State.Shopping)
 		{
+
 			//TODO
 
 				//display text “press space to raise anchor”
@@ -79,48 +87,48 @@ public class UserShipAgent : MonoBehaviour {
 			//underneath the messages for maxed upgrades and no loot.
 
 		}
+		else if (ship.state == Ship.State.Waiting) 
+		{
+			//listen for space where user wants to start looting or shopping
+			if (Input.GetKeyUp(KeyCode.Space))
+			{
+				//start looting
+				if (curhit.name.Equals(island.name))
+				{
+					ship.state = Ship.State.Looting;
+										
+					screenText = "Press Space when done looting the island.";
+					print ("now looting");
+				}
+				//start shopping
+				else if (curhit.name.Equals(harbor.name))
+				{
+					ship.state = Ship.State.Shopping;					
+					gui.shoppingGUI.SetActive(true);
 
-		//Testing for Shop GUI
-		foreach (char c in Input.inputString) {
-			//Press s to open the shop
-			if (c == "s"[0]){
-				ship.state = Ship.State.Shopping;
-				shoppingGUI.SetActive(true);
+					print ("now shopping");
+				}
 			}
-
 		}
-
 	}
 
 	void OnTriggerEnter(Collider hit)
 	{
-		print("hit a trigger");
+		print("hit a trigger: " + hit.name);
+		curhit = hit;
 
-		if (hit.tag.Equals("island"))
+		//if player hit the island
+		if (hit.name.Equals(island.name) && (ship.state == Ship.State.Roaming))
 		{
-			if (ship.state != Ship.State.Looting)
-			{
-				screenText = "Press Space to start looting the island \n and get some gold!";
-			}
-
-			if (Input.GetKeyUp(KeyCode.Space))
-			{
-				ship.state = (ship.state == Ship.State.Looting) ? Ship.State.Roaming : Ship.State.Looting;
-			}
+			ship.state = Ship.State.Waiting;
+			screenText = "Press Space to start looting the island \n and get some gold!";
 		}
-			
 
-		else if (hit.name.Equals(harbor.name))
+		//if player hit the harbor
+		else if (hit.name.Equals(harbor.name) && (ship.state == Ship.State.Roaming))
 		{
-			if (ship.state != Ship.State.Shopping)
-			{
-				screenText = "Press Space to enter the harbor, drop off your gold, \n and buy upgrades.";
-			}
-			
-			if (Input.GetKeyUp(KeyCode.Space))
-			{
-				ship.state = (ship.state == Ship.State.Shopping) ? Ship.State.Roaming : Ship.State.Shopping;
-			}
+			ship.state = Ship.State.Waiting;
+			screenText = "Press Space to enter the harbor, drop off your gold, \n and buy upgrades.";
 		}
 	}
 
@@ -133,80 +141,5 @@ public class UserShipAgent : MonoBehaviour {
 	{
 		GUI.Label (new Rect (0,0,190,800), screenText);
 	}
-
-
-	//The following are functions for the Shop GUI buttons
-	public void CannonUpgrade(){
-		//If the cannons are already maxed out or there's
-		//not enough loot to upgrade it, hide the shop GUI
-		//and show the appropriate message.
-		if (cannonPower == 5) {
-			shoppingGUI.SetActive(false);
-			maxMessage.SetActive(true);
-		} 
-		else if (loot < 100) {
-			shoppingGUI.SetActive(false);
-			noLootMessage.SetActive(true);
-		}
-
-		// Otherwise, upgrade the cannon and subtract from loot each time.
-		else {
-			cannonPower++;
-			loot = loot - 100;
-		}
-	}
 	
-	public void HullUpgrade(){
-		//If the hull is already maxed out or there's
-		//not enough loot to upgrade it, hide the shop GUI
-		//and show the appropriate message.
-		if (hull == 5) {
-			shoppingGUI.SetActive(false);
-			maxMessage.SetActive(true);
-		} 
-		else if (loot < 100) {
-			shoppingGUI.SetActive(false);
-			noLootMessage.SetActive(true);
-		}
-
-		// Otherwise, upgrade the hull and subtract from loot each time.
-		else {
-			hull++;
-			loot = loot - 100;
-		}
-	}
-	
-	public void SailUpgrade(){
-		//If the sails are already maxed out or there's
-		//not enough loot to upgrade it, hide the shop GUI
-		//and show the appropriate message.
-		if (sails == 5) {
-			shoppingGUI.SetActive(false);
-			maxMessage.SetActive(true);
-		} 
-		else if (loot < 100) {
-			shoppingGUI.SetActive(false);
-			noLootMessage.SetActive(true);
-		}
-
-		// Otherwise, upgrade the sails and subtract from loot each time.
-		else {
-			sails++;
-			loot = loot - 100;
-		}
-	}
-
-	public void ReturnToSea(){
-		//Close the shop GUI and change the ship's state to Roaming
-		shoppingGUI.SetActive(false);
-
-		ship.state = Ship.State.Roaming;
-	}
-
-	public void ReturnToMenu(){
-		//Hide the other messages and show the shop GUI again
-		maxMessage.SetActive(false);
-		noLootMessage.SetActive(false);
-		shoppingGUI.SetActive(true);
-	}
 }
