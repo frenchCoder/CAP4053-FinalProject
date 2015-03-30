@@ -104,7 +104,6 @@ public class UserShipAgent : MonoBehaviour {
 				else if (curhit.name.Equals(harbor.name))
 				{
 					ship.state = Ship.State.Shopping;					
-					gui.shoppingGUI.SetActive(true);
 
 					print ("now shopping");
 				}
