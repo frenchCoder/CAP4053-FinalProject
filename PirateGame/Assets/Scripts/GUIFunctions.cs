@@ -8,6 +8,8 @@ public class GUIFunctions : MonoBehaviour {
 	public GameObject maxMessage;
 	public GameObject noLootMessage;
 
+	public bool open;
+
 
 	// Use this for initialization
 	void Start () {
@@ -19,7 +21,11 @@ public class GUIFunctions : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if(ship.state == Ship.State.Shopping && !open)
+		{
+			open = true;
+			shoppingGUI.SetActive(true);
+		}
 	}
 
 	//The following are functions for the Shop GUI buttons
@@ -28,7 +34,7 @@ public class GUIFunctions : MonoBehaviour {
 		//not enough loot to upgrade it, hide the shop GUI
 		//and show the appropriate message.
 		//TODO: figure out cannon attackpower stuff
-		if (ship.leftCannons[0].attackPower == 5) {
+		if (ship.leftCannon.attackPower == 5) {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 
@@ -110,5 +116,7 @@ public class GUIFunctions : MonoBehaviour {
 		maxMessage.SetActive(false);
 		noLootMessage.SetActive(false);
 		shoppingGUI.SetActive(true);
+
+		open = false;
 	}
 }

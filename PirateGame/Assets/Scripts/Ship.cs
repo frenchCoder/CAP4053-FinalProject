@@ -34,8 +34,8 @@ public class Ship : MonoBehaviour {
 	public int maxGold;
 
 	//cannons on each side of ship, 3 per side
-	public List<Cannon> leftCannons;
-	public List<Cannon> rightCannons;
+	public Cannon leftCannon;
+	public Cannon rightCannon;
 
 	public float points;
 	public float health;
@@ -63,10 +63,9 @@ public class Ship : MonoBehaviour {
 	void Start () 
 	{
 		//TODO: init variables
-		Vector3 temp = transform.forward;
-		//temp.x += 90.0f;
-		temp.z += 90.0f;
-		Debug.DrawRay (transform.position, temp);
+		leftCannon = new Cannon (1);
+		rightCannon = new Cannon (1);
+
 	}
 	
 	// Update is called once per frame
@@ -86,22 +85,6 @@ public class Ship : MonoBehaviour {
 			//handled by user or AI object
 		}
 
-
-		//TODO:figure out cannon rays
-
-		Vector3 rightmiddle = transform.right;
-		rightmiddle.Normalize ();
-		Vector3 leftmiddle = -transform.right;
-		leftmiddle.Normalize ();
-
-		Vector3 canDist = new Vector3 (0.2f, 0, 0);
-		//Debug.DrawRay (transform.position, rightmiddle, Color.red);
-		//Debug.DrawRay (transform.position-canDist, rightmiddle, Color.red);
-		//Debug.DrawRay (transform.position+canDist, rightmiddle, Color.red);
-
-		//Debug.DrawRay (transform.position, leftmiddle, Color.red);
-		////Debug.DrawRay (transform.position-canDist, leftmiddle, Color.red);
-		//Debug.DrawRay (transform.position+canDist, leftmiddle, Color.red);
 
 	}
 
@@ -135,12 +118,8 @@ public class Ship : MonoBehaviour {
 				break;
 			case Upgrade.AttackPower:
 				//TODO: determine how to increase attack power
-				leftCannons[0].attackPower++;
-				leftCannons[1].attackPower++;
-				leftCannons[2].attackPower++;
-				rightCannons[0].attackPower++;
-				rightCannons[1].attackPower++;
-				rightCannons[2].attackPower++;
+				leftCannon.attackPower++;
+				rightCannon.attackPower++;
 				break;
 			case Upgrade.Hp:
 				health += 5;//TODO: determine final value
