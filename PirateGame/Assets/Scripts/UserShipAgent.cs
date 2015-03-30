@@ -5,6 +5,8 @@ public class UserShipAgent : MonoBehaviour {
 	
 	public Ship ship;
 	public Transform harbor;
+	public GUIFunctions gui;
+
 	public Transform island;
 	private string screenText;
 	private Collider curhit;
@@ -20,11 +22,13 @@ public class UserShipAgent : MonoBehaviour {
 		 */
 		
 		ship = (Ship) this.GetComponent(typeof(Ship));
+		gui = (GUIFunctions)GameObject.Find ("PlayerShip").GetComponent (typeof(GUIFunctions));
+
 		screenText = "";
 		ship.state = Ship.State.Roaming;
 		//init ship's harbor
-		//harbor = GameObject.Find ("PlayerHarbor").transform;
-		//island = GameObject.Find ("LootIsland").transform;
+		harbor = GameObject.Find ("PlayerHarbor").transform;
+		island = GameObject.Find ("LootIsland").transform;
 	}
 	
 	// Update is called once per frame
@@ -41,10 +45,14 @@ public class UserShipAgent : MonoBehaviour {
 
 			//TODO:add keylisteners for attacking
 			//'Q' shoot left cannons
-			//'E' shoot right rannons
+			//'E' shoot right rannons */
+
+			//No menus should show when the ship is roaming.
+
 		}
+
 		else if (ship.state == Ship.State.Looting)
-		{
+		{ 
 			//listen for space where user wants to stop and roam again
 			if (Input.GetKeyUp(KeyCode.Space))
 			{
@@ -56,34 +64,28 @@ public class UserShipAgent : MonoBehaviour {
 
 				print ("done looting");
 			}
-
 			//TODO
-			/*
-				display text “press space to stop looting”
-				ship object handles looting
-			*/
+
+				//display text “press space to stop looting”
+				//ship object handles looting
+
 		}
+
 		else if (ship.state == Ship.State.Shopping)
 		{
-			//listen for space where user wants to stop and roam again
-			if (Input.GetKeyUp(KeyCode.Space))
-			{
-				Vector3 temp = transform.rotation.eulerAngles;
-				temp.y += 180.0f;
-				transform.rotation = Quaternion.Euler(temp);
-				transform.position += transform.up * ship.curSpeed * Time.deltaTime;
-				ship.state = Ship.State.Roaming;
-
-				print ("done shopping");
-				
-			}
 
 			//TODO
-			/*
-				display text “press space to raise anchor”
-				automatically unload gold off ship to harbor
-				display shop menu
-			*/
+
+				//display text “press space to raise anchor”
+				//automatically unload gold off ship to harbor
+				//display shop menu
+
+			//Note that, if the "shoppingGUI.SetActive(true);" line
+			//was put here, then the ShopGUI would constantly be on the
+			//screen while the ship's state is set to Shopping. This
+			//means that the shop GUI would still be visible and clickable
+			//underneath the messages for maxed upgrades and no loot.
+
 		}
 		else if (ship.state == Ship.State.Waiting) 
 		{
@@ -101,9 +103,9 @@ public class UserShipAgent : MonoBehaviour {
 				//start shopping
 				else if (curhit.name.Equals(harbor.name))
 				{
-					ship.state = Ship.State.Shopping;
+					ship.state = Ship.State.Shopping;					
+					gui.shoppingGUI.SetActive(true);
 
-					screenText = "Press Space when done shopping.";
 					print ("now shopping");
 				}
 			}
@@ -139,5 +141,5 @@ public class UserShipAgent : MonoBehaviour {
 	{
 		GUI.Label (new Rect (0,0,190,800), screenText);
 	}
-
+	
 }

@@ -54,8 +54,7 @@ public class Ship : MonoBehaviour {
 	{
 		Speed,
 		MaxGold,
-		LeftAttackPower,
-		RightAttackPower,
+		AttackPower,
 		Hp
 	};
 
@@ -134,14 +133,11 @@ public class Ship : MonoBehaviour {
 			case Upgrade.Speed:
 				maxSpeed++;
 				break;
-			case Upgrade.LeftAttackPower:
+			case Upgrade.AttackPower:
 				//TODO: determine how to increase attack power
 				leftCannons[0].attackPower++;
 				leftCannons[1].attackPower++;
 				leftCannons[2].attackPower++;
-				break;
-			case Upgrade.RightAttackPower:
-				//TODO: determine how to increase attack power
 				rightCannons[0].attackPower++;
 				rightCannons[1].attackPower++;
 				rightCannons[2].attackPower++;
