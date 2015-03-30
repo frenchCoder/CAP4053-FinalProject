@@ -20,6 +20,7 @@
 
 #added by Jessica, Unity3D generated cs meta files
 *.cs.meta
+*.mat.meta
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
