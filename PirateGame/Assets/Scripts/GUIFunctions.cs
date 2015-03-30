@@ -36,7 +36,7 @@ public class GUIFunctions : MonoBehaviour {
 		//not enough loot to upgrade it, hide the shop GUI
 		//and show the appropriate message.
 		//TODO: figure out cannon attackpower stuff
-		if (ship.leftCannons[0].attackPower == 5) {
+		if (ship.leftCannon.attackPower == 5) {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 
@@ -49,7 +49,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			ship.goldTotal -= 100;
 			ship.upgrade (Ship.Upgrade.AttackPower);
-			menuText = "Your attack power is now " + ship.leftCannons[0].attackPower + "!";
+			menuText = "Your attack power is now " + ship.leftCannon.attackPower + "!";
 		}
 		
 	}

@@ -103,8 +103,7 @@ public class UserShipAgent : MonoBehaviour {
 				//start shopping
 				else if (curhit.name.Equals(harbor.name))
 				{
-					ship.state = Ship.State.Shopping;					
-
+					ship.state = Ship.State.Shopping;	
 					print ("now shopping");
 				}
 			}
