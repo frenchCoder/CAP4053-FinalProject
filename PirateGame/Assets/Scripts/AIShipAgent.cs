@@ -94,17 +94,7 @@ public class AIShipAgent : MonoBehaviour {
 			ship.state = Ship.State.Shopping;
 				
 		}
-		
-		/*TODO: island looting trigger
-			change ship state
-			stay on island given amount of time
-		*/
 
-		/*TODO: harbor shopping trigger
-			change ship state
-			take gold from ship to harbor
-			purchase upgrades based on aggressionLevel
-		 */
 	}
 
 
