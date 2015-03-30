@@ -4,6 +4,17 @@ using System.Collections.Generic;
 
 public class Ship : MonoBehaviour {
 
+	[System.Serializable]
+	public class Cannon
+	{
+		public int attackPower;
+		
+		public Cannon(int ap)
+		{
+			attackPower = ap;	
+		}		
+	}
+
 	public float maxSpeed;
 	public float minSpeed;
 	public float curSpeed;
@@ -33,7 +44,17 @@ public class Ship : MonoBehaviour {
 	{
 		Looting,
 		Shopping,//in harbor
-		Roaming
+		Roaming,
+		Waiting
+	};
+
+	public enum Upgrade
+	{
+		Speed,
+		MaxGold,
+		LeftAttackPower,
+		RightAttackPower,
+		Hp
 	};
 
 
@@ -41,6 +62,10 @@ public class Ship : MonoBehaviour {
 	void Start () 
 	{
 		//TODO: init variables
+		Vector3 temp = transform.forward;
+		//temp.x += 90.0f;
+		temp.z += 90.0f;
+		Debug.DrawRay (transform.position, temp);
 	}
 	
 	// Update is called once per frame
@@ -59,51 +84,76 @@ public class Ship : MonoBehaviour {
 		{
 			//handled by user or AI object
 		}
+
+
+		//TODO:figure out cannon rays
+
+		Vector3 rightmiddle = transform.right;
+		rightmiddle.Normalize ();
+		Vector3 leftmiddle = -transform.right;
+		leftmiddle.Normalize ();
+
+		Vector3 canDist = new Vector3 (0.2f, 0, 0);
+		//Debug.DrawRay (transform.position, rightmiddle, Color.red);
+		//Debug.DrawRay (transform.position-canDist, rightmiddle, Color.red);
+		//Debug.DrawRay (transform.position+canDist, rightmiddle, Color.red);
+
+		//Debug.DrawRay (transform.position, leftmiddle, Color.red);
+		////Debug.DrawRay (transform.position-canDist, leftmiddle, Color.red);
+		//Debug.DrawRay (transform.position+canDist, leftmiddle, Color.red);
+
 	}
 
-	//attack by shooting cannons from side of ship
-	//"L" for left, "R" for right
-	public void attack (string side)
-	{
-		//TODO: add proper functionality
-	}
 
 	//increase gold on ship each tick
 	public void loot ()
 	{
 		//TODO: add proper functionality
-		//if max gold is reached then return to free roam state
-	}
-
-	void OnTriggerEnter(Collider hit)
-	{
-		print ("hit a trigger");		
-
-		/*TODO: oncollision for cannonhits, 
-			if state is not roaming, then cant be hit
-			health -= cannon.attackpower
-			if heath=0 then ship returns to harbor, enemy ship will receive its gold
-			destroy cannon(here or have cannon object handle it)
-		*/
 	}
 
 	//increase a ship's property
-	public void upgrade ()
+	public void upgrade (Ship.Upgrade up)
 	{
-		//TODO: add functionality
+		switch (up)
+		{
+			case Upgrade.Speed:
+				maxSpeed++;
+				break;
+			case Upgrade.LeftAttackPower:
+				//TODO: determine how to increase attack power
+				leftCannons[0].attackPower++;
+				leftCannons[1].attackPower++;
+				leftCannons[2].attackPower++;
+				break;
+			case Upgrade.RightAttackPower:
+				//TODO: determine how to increase attack power
+				rightCannons[0].attackPower++;
+				rightCannons[1].attackPower++;
+				rightCannons[2].attackPower++;
+				break;
+			case Upgrade.Hp:
+				health += 5;//TODO: determine final value
+				break;
+			case Upgrade.MaxGold:
+				maxGold += 25;
+				break;
+			default:
+				print ("no upgrades given");
+				break;
+		}
 	}
 
 	/*
 	//return true if ship is within range on left side
 	public bool enemyShipOnLeft(int range)
 	{
-		//TODO: add functionality, use adj/pie sensor
+		//TODO: add functionality, use ray sensor
 	}
 
 	//return true if ship is within range on right side
 	public bool enemyShipOnRight(int range)
 	{
-		//TODO: add functionality, use adj/pie sensor
+		//TODO: add functionality, use ray sensor
 	}
 	*/
 }
