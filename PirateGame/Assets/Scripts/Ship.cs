@@ -10,15 +10,17 @@ public class Ship : MonoBehaviour {
 	public float turnSpeed;
 	//amount of gold looted per tick
 	public float lootingSpeed;
-
+	
+	private float lootingTime;
+	
 	//gold player has in their harbor
-	public float goldInHarbor;
+	public int goldInHarbor;
 	//gold player is carrying on their ship
-	public float goldInShip;
+	public int goldInShip;
 	//gold player has overall
-	public float goldTotal;
+	public int goldTotal;
 	//max amount of gold a ship can carry
-	public float maxGold;
+	public int maxGold;
 
 	//cannons on each side of ship, 3 per side
 	public List<Cannon> leftCannons;
@@ -71,6 +73,19 @@ public class Ship : MonoBehaviour {
 	//increase gold on ship each tick
 	public void loot ()
 	{
+		if(lootingTime < 0)
+		{
+			if(goldInShip < maxGold)
+			{
+				goldInShip++; 
+			}
+			lootingTime = lootingSpeed;
+		}
+		
+		else
+		{
+			lootingTime -= Time.deltaTime;
+		}
 		//TODO: add proper functionality
 		//if max gold is reached then return to free roam state
 	}
@@ -96,12 +111,14 @@ public class Ship : MonoBehaviour {
 	//return true if ship is within range on left side
 	public bool enemyShipOnLeft(int range)
 	{
+		return false;
 		//TODO: add functionality, use adj/pie sensor
 	}
 
 	//return true if ship is within range on right side
 	public bool enemyShipOnRight(int range)
 	{
+		return false;
 		//TODO: add functionality, use adj/pie sensor
 	}
 
