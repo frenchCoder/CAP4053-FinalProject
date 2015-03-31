@@ -45,9 +45,16 @@ public class UserShipAgent : MonoBehaviour {
 
 			//TODO:add keylisteners for attacking
 			//'Q' shoot left cannons
-			//'E' shoot right rannons */
-
-			//No menus should show when the ship is roaming.
+			if (Input.GetKeyUp(KeyCode.Q))
+			{
+				ship.attack("L");
+				
+			}
+			//'E' shoot right rannons 
+			if (Input.GetKeyUp(KeyCode.E))
+			{
+				ship.attack("R");
+			}
 
 		}
 

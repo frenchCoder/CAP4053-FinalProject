@@ -65,7 +65,10 @@ public class Ship : MonoBehaviour {
 		//TODO: init variables
 		leftCannon = new Cannon (1);
 		rightCannon = new Cannon (1);
-
+		maxSpeed = 1;
+		minSpeed = 0.2f;
+		turnSpeed = 50;
+		health = 5;
 	}
 	
 	// Update is called once per frame
@@ -130,6 +133,76 @@ public class Ship : MonoBehaviour {
 			default:
 				print ("no upgrades given");
 				break;
+		}
+	}
+
+	
+	//attack by shooting cannons from side of ship
+	//"L" for left, "R" for right
+	public void attack (string side)
+	{		
+		float buffer = 0.000001f;
+		RaycastHit hit;
+		int sensorRange = 1;
+		
+		//right side
+		if (side.Equals("R"))
+		{
+			//get nearest ship in shooting range for each cannon
+			Vector3 rightdir = transform.right;
+			rightdir.Normalize ();
+			
+			//TODO: add enemy tags to AI ships
+			//TODO: do this for all 3 cannons
+			if (Physics.Raycast (transform.position, rightdir, out hit, sensorRange + buffer) && hit.transform.tag.Equals("Enemy"))
+			{
+				//get enemy ship component and implement damage
+				GameObject enemy = hit.transform.gameObject;
+				Ship enemyShip = (Ship) enemy.GetComponent(typeof(Ship));
+				enemyShip.takeDamage(rightCannon);
+				
+				Debug.DrawRay(transform.position, rightdir * hit.distance, Color.red, 10);
+				print ("hit ship");
+				
+			}
+			else 
+			{
+				Debug.DrawRay(transform.position, rightdir * sensorRange, Color.red, 10);
+			}
+		}
+		//left side
+		else if (side.Equals("L"))
+		{
+			//get nearest ship in shooting range for each cannon
+			Vector3 leftdir = -transform.right;
+			leftdir.Normalize ();
+			
+			//TODO: add enemy tags to AI ships
+			//TODO: do this for all 3 cannons
+			if (Physics.Raycast (transform.position, leftdir, out hit, sensorRange + buffer) && hit.transform.tag.Equals("Enemy"))
+			{
+				//get enemy ship component and implement damage
+				Ship enemyShip = (Ship) hit.transform.GetComponent(typeof(Ship));
+				enemyShip.takeDamage(leftCannon);
+				
+				Debug.DrawRay(transform.position, leftdir * hit.distance, Color.red, 10);
+				print ("hit ship: " + hit.transform.name);				
+			}
+			else 
+			{
+				Debug.DrawRay(transform.position, leftdir * sensorRange, Color.red, 10);
+			}	
+		}
+	}
+	
+	public void takeDamage(Cannon cannon)
+	{
+		//reduce health based on attack power of the attacking cannon
+		//ship can only be attacked when roaming
+		if (state == State.Roaming)
+		{
+			health -= cannon.attackPower;
+			print ("I, " + this.transform.name + ", have been hit!!");
 		}
 	}
 
