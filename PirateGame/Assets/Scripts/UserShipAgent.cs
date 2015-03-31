@@ -22,7 +22,7 @@ public class UserShipAgent : MonoBehaviour {
 		 */
 		
 		ship = (Ship) this.GetComponent(typeof(Ship));
-		gui = (GUIFunctions)GameObject.Find ("PlayerShip").GetComponent (typeof(GUIFunctions));
+		//gui = GameObject.Find ("PlayerShip").GetComponent <GUIFunctions>();
 
 		screenText = "";
 		ship.state = Ship.State.Roaming;
@@ -53,27 +53,24 @@ public class UserShipAgent : MonoBehaviour {
 
 		else if (ship.state == Ship.State.Looting)
 		{ 
+			screenText = "Press Space to set sail.";//TODO:move this to handle by gui && add to shopping state
 			//listen for space where user wants to stop and roam again
 			if (Input.GetKeyUp(KeyCode.Space))
 			{
-				Vector3 temp = transform.rotation.eulerAngles;
-				temp.y += 180.0f;
-				transform.rotation = Quaternion.Euler(temp);
-				transform.position += transform.up * ship.curSpeed * Time.deltaTime;
-				ship.state = Ship.State.Roaming;
-
+				gui.ResetCoins();
+				gui.ReturnToSea ();
 				print ("done looting");
 			}
-			//TODO
-
-				//display text “press space to stop looting”
-				//ship object handles looting
-
+			
+			if(ship.goldInShip < ship.maxGold)
+			{
+				ship.loot();
+			}
+			print (ship.goldInShip);
 		}
 
 		else if (ship.state == Ship.State.Shopping)
 		{
-
 			//TODO
 
 				//display text “press space to raise anchor”
@@ -87,6 +84,7 @@ public class UserShipAgent : MonoBehaviour {
 			//underneath the messages for maxed upgrades and no loot.
 
 		}
+		//TODO: should be able to move in waiting state so you can move around the island, not just get stopped on one side
 		else if (ship.state == Ship.State.Waiting) 
 		{
 			//listen for space where user wants to start looting or shopping
@@ -96,8 +94,6 @@ public class UserShipAgent : MonoBehaviour {
 				if (curhit.name.Equals(island.name))
 				{
 					ship.state = Ship.State.Looting;
-										
-					screenText = "Press Space when done looting the island.";
 					print ("now looting");
 				}
 				//start shopping
