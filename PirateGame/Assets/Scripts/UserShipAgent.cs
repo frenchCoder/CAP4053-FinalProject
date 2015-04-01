@@ -3,11 +3,10 @@ using System.Collections;
 
 public class UserShipAgent : MonoBehaviour {
 	
-	public Ship ship;
-	public Transform harbor;
+	Ship ship;
 	public GUIFunctions gui;
 
-	public Transform island;
+	private Transform island;
 	private string screenText;
 	private Collider curhit;
 
@@ -21,13 +20,10 @@ public class UserShipAgent : MonoBehaviour {
 			done in update: open shop menu for user to purchase item, game timer starts when menu is exited
 		 */
 		
-		ship = (Ship) this.GetComponent(typeof(Ship));
-		//gui = GameObject.Find ("PlayerShip").GetComponent <GUIFunctions>();
-
+		ship = GetComponent<Ship>();
+		gui = ((GameObject)GameObject.Find("GUI_Manager")).GetComponent<GUIFunctions>();
 		screenText = "";
-		ship.state = Ship.State.Roaming;
-		//init ship's harbor
-		harbor = GameObject.Find ("PlayerHarbor").transform;
+		ship.state = Ship.State.Roaming; //Should probably start out as shopping & facing the harbor so they can get their first free upgrade when the game starts for the first time.
 		island = GameObject.Find ("LootIsland").transform;
 	}
 	
@@ -37,18 +33,19 @@ public class UserShipAgent : MonoBehaviour {
 		//move/attack according to user if roaming
 		if (ship.state == Ship.State.Roaming)
 		{
+			//Rotate on input
 			transform.Rotate(Vector3.forward * -Input.GetAxis("Horizontal") * ship.turnSpeed * Time.deltaTime);			
+			//Always move forward
 			transform.position += transform.up * ship.curSpeed * Time.deltaTime;
-			
+
+			//Increase/decrease speed on input
 			ship.curSpeed += Input.GetAxis("Vertical") * Time.deltaTime;			
 			ship.curSpeed = Mathf.Clamp(ship.curSpeed, 0.5f, ship.maxSpeed);
 
-			//TODO:add keylisteners for attacking
 			//'Q' shoot left cannons
 			if (Input.GetKeyUp(KeyCode.Q))
 			{
-				ship.attack("L");
-				
+				ship.attack("L");				
 			}
 			//'E' shoot right rannons 
 			if (Input.GetKeyUp(KeyCode.E))
@@ -62,17 +59,15 @@ public class UserShipAgent : MonoBehaviour {
 		{ 
 			screenText = "Press Space to set sail.";//TODO:move this to handle by gui && add to shopping state
 			//listen for space where user wants to stop and roam again
-			if (Input.GetKeyUp(KeyCode.Space))
+			if (Input.GetKeyDown(KeyCode.Space) || ship.goldInShip >= ship.maxGold)
 			{
 				gui.ResetCoins();
 				gui.ReturnToSea ();
 				print ("done looting");
 			}
 			
-			if(ship.goldInShip < ship.maxGold)
-			{
+			else
 				ship.loot();
-			}
 		}
 
 		else if (ship.state == Ship.State.Shopping)
@@ -103,7 +98,7 @@ public class UserShipAgent : MonoBehaviour {
 					print ("now looting");
 				}
 				//start shopping
-				else if (curhit.name.Equals(harbor.name))
+				else if (curhit.name.Equals(ship.harbor.name))
 				{
 					ship.state = Ship.State.Shopping;	
 					print ("now shopping");
@@ -125,7 +120,7 @@ public class UserShipAgent : MonoBehaviour {
 		}
 
 		//if player hit the harbor
-		else if (hit.name.Equals(harbor.name) && (ship.state == Ship.State.Roaming))
+		else if (hit.name.Equals(ship.harbor.name) && (ship.state == Ship.State.Roaming))
 		{
 			ship.state = Ship.State.Waiting;
 			screenText = "Press Space to enter the harbor, drop off your gold, \n and buy upgrades.";

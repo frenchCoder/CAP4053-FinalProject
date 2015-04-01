@@ -2,31 +2,32 @@
 using System.Collections;
 
 public class GUIFunctions : MonoBehaviour {
-	public Ship ship;
+	Ship ship;
 
-	//change from public to private and set values by getting object with correct tag from GameObject.Find("tag_here");
+	//TODO: change from public to private and have Start create instances from the prefabs
+	public GameObject lootingGUI;
 	public GameObject shoppingGUI;
 	public GameObject maxMessage;
 	public GameObject noLootMessage;
 
-
-	public GameObject lootingGUI;
 	private GameObject[] lootingCoins;
 	private int lootCoinCount = 0;
 
 	private string menuText;
 
-	public bool open;
+	bool open;
 
 	// Use this for initialization
 	void Start () {
 		lootingCoins = FillCoins(10);
-		ship = GameObject.Find("PlayerShip").GetComponent<Ship>();
+		ship = GameObject.FindGameObjectWithTag("Player").GetComponent<Ship>();
 
 		lootingGUI.SetActive (false);
 		shoppingGUI.SetActive (false);
 		maxMessage.SetActive (false);
 		noLootMessage.SetActive (false);
+
+		open = false;
 		menuText = "";
 	}
 	
