@@ -56,7 +56,8 @@ public class Ship : MonoBehaviour {
 		Speed,
 		MaxGold,
 		AttackPower,
-		Hp
+		Hp,
+		LootingSpeed
 	};
 
 
@@ -70,14 +71,19 @@ public class Ship : MonoBehaviour {
 		minSpeed = 0.2f;
 		turnSpeed = 50;
 		health = 5;
+		maxGold = 100;
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-
+		if (state == Ship.State.Shopping && goldInShip > 0)
+		{
+			goldInHarbor += goldInShip;
+			goldTotal += goldInShip;//this variable keeps track of total gold collected, so it is never decreased by upgrade purchases
+			goldInShip = 0;
+		}
 	}
-
 
 	//increase gold on ship each tick
 	public void loot ()
@@ -86,7 +92,7 @@ public class Ship : MonoBehaviour {
 		{
 			if(goldInShip < maxGold)
 			{
-				goldInShip++;
+				goldInShip += 25;
 				gui.ShowNextCoin();
 			}
 			lootingTime = lootingSpeed;
@@ -117,6 +123,9 @@ public class Ship : MonoBehaviour {
 				break;
 			case Upgrade.MaxGold:
 				maxGold += 25;
+				break;
+			case Upgrade.LootingSpeed:
+				lootingSpeed++;
 				break;
 			default:
 				print ("no upgrades given");
