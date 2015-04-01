@@ -4,18 +4,26 @@ using System.Collections;
 public class GUIFunctions : MonoBehaviour {
 	public Ship ship;
 
+	//change from public to private and set values by getting object with correct tag from GameObject.Find("tag_here");
 	public GameObject shoppingGUI;
 	public GameObject maxMessage;
 	public GameObject noLootMessage;
+
+
+	public GameObject lootingGUI;
+	private GameObject[] lootingCoins;
+	private int lootCoinCount = 0;
 
 	private string menuText;
 
 	public bool open;
 
-
 	// Use this for initialization
 	void Start () {
-		ship = (Ship) GameObject.Find("PlayerShip").GetComponent(typeof(Ship));
+		lootingCoins = FillCoins(10);
+		ship = GameObject.Find("PlayerShip").GetComponent<Ship>();
+
+		lootingGUI.SetActive (false);
 		shoppingGUI.SetActive (false);
 		maxMessage.SetActive (false);
 		noLootMessage.SetActive (false);
@@ -23,10 +31,49 @@ public class GUIFunctions : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void Update () {
-		if(ship.state == Ship.State.Shopping && !open){
+	void Update () 	
+	{
+		if(ship.state == Ship.State.Shopping && !open)
+		{
 			shoppingGUI.SetActive(true);
 			open = true;
+		}
+		if(ship.state == Ship.State.Looting && !open)
+		{
+			lootingGUI.SetActive(true);
+			open = true;
+		}
+	}
+		
+	public GameObject[] FillCoins(int numCoins)
+	{
+		GameObject[] temp = new GameObject[numCoins];
+		for(int i=0; i<temp.Length; i++)
+		{
+			GameObject next = (GameObject)Instantiate(Resources.Load("Coin"));
+			next.transform.position += new Vector3(0.5f * i, 0f, 0f);
+			next.SetActive (false);
+			temp[i] = next;
+		}
+		return temp;
+	}
+
+	public void ShowNextCoin()
+	{
+		if(lootCoinCount >= lootingCoins.Length)
+		{
+			ResetCoins();
+		}
+		lootingCoins[lootCoinCount].SetActive(true);
+		lootCoinCount++;
+	}
+
+	public void ResetCoins()
+	{
+		lootCoinCount = 0;
+		for(int i=0; i<lootingCoins.Length; i++)
+		{
+			lootingCoins[i].SetActive(false);
 		}
 	}
 
@@ -122,24 +169,28 @@ public class GUIFunctions : MonoBehaviour {
 	}
 	
 	//return to roaming state on main board from shopping in harbor
-	public void ReturnToSea(){
+	public void ReturnToSea()
+	{
 		//Close the shop GUI and change the ship's state to Roaming
 		shoppingGUI.SetActive(false);
-		
+		lootingGUI.SetActive (false);
 		//turn ship around
 		Transform playerObject = GameObject.Find ("PlayerShip").transform;
 		Vector3 temp = playerObject.rotation.eulerAngles;
 		temp.y += 180.0f;
 		playerObject.rotation = Quaternion.Euler(temp);
 		playerObject.position += transform.up * ship.curSpeed * Time.deltaTime;
+		ship.curSpeed = ship.minSpeed;
 		ship.state = Ship.State.Roaming;
 		menuText = "";
 		
 		print ("done shopping");
+		open = false;
 	}
 	
 	//called when returning to main menu after 'unable to buy' messages
-	public void ReturnToMenu(){
+	public void ReturnToMenu()
+	{
 		//Hide the other messages and show the shop GUI again
 		maxMessage.SetActive(false);
 		noLootMessage.SetActive(false);

@@ -14,7 +14,8 @@ public class Ship : MonoBehaviour {
 			attackPower = ap;	
 		}		
 	}
-
+	
+	public GUIFunctions gui;
 	public float maxSpeed;
 	public float minSpeed;
 	public float curSpeed;
@@ -74,20 +75,6 @@ public class Ship : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		//check state and call function to perform action based on that state
-		if (state == State.Looting)
-		{
-			//TODO: call loot()
-		}
-		else if (state == State.Shopping)
-		{
-			//TODO: TBD
-		}
-		else if (state == State.Roaming)
-		{
-			//handled by user or AI object
-		}
-
 
 	}
 
@@ -99,7 +86,8 @@ public class Ship : MonoBehaviour {
 		{
 			if(goldInShip < maxGold)
 			{
-				goldInShip++; 
+				goldInShip++;
+				gui.ShowNextCoin();
 			}
 			lootingTime = lootingSpeed;
 		}
