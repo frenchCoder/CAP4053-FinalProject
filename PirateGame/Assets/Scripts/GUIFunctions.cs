@@ -87,14 +87,14 @@ public class GUIFunctions : MonoBehaviour {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 
-		else if (ship.goldTotal < 100) {
+		else if (ship.goldInHarbor < 100) {
 			shoppingGUI.SetActive(false);
 			noLootMessage.SetActive(true);
 		}
 		
 		// Otherwise, upgrade the cannon and subtract from loot each time.
 		else {
-			ship.goldTotal -= 100;
+			ship.goldInHarbor -= 100;
 			ship.upgrade (Ship.Upgrade.AttackPower);
 			menuText = "Your attack power is now " + ship.leftCannon.attackPower + "!";
 		}
@@ -110,14 +110,14 @@ public class GUIFunctions : MonoBehaviour {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 
-		else if (ship.goldTotal < 100) {
+		else if (ship.goldInHarbor < 100) {
 			shoppingGUI.SetActive(false);
 			noLootMessage.SetActive(true);
 		}
 		
 		// Otherwise, upgrade the hull and subtract from loot each time.
 		else {
-			ship.goldTotal -= 100;
+			ship.goldInHarbor -= 100;
 			ship.upgrade(Ship.Upgrade.Hp);
 			menuText = "Your hull strength is now " + ship.health + "!";
 		}
@@ -133,14 +133,14 @@ public class GUIFunctions : MonoBehaviour {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 
-		else if (ship.goldTotal < 100) {
+		else if (ship.goldInHarbor < 100) {
 			shoppingGUI.SetActive(false);
 			noLootMessage.SetActive(true);
 		}
 		
 		// Otherwise, upgrade the sails and subtract from loot each time.
 		else {
-			ship.goldTotal -= 100;
+			ship.goldInHarbor -= 100;
 			ship.upgrade(Ship.Upgrade.Speed);
 			menuText = "Your max speed is now " + ship.maxSpeed + "!";
 		}
@@ -155,14 +155,14 @@ public class GUIFunctions : MonoBehaviour {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 
-		else if (ship.goldTotal < 100) {
+		else if (ship.goldInHarbor < 100) {
 			shoppingGUI.SetActive(false);
 			noLootMessage.SetActive(true);
 		}
 		
 		// Otherwise, upgrade the sails and subtract from loot each time.
 		else {
-			ship.goldTotal -= 100;
+			ship.goldInHarbor -= 100;
 			ship.upgrade(Ship.Upgrade.MaxGold);
 			menuText = "You can now hold " + ship.maxGold + " gold!";
 		}
