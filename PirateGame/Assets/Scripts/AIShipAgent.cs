@@ -3,7 +3,7 @@ using System.Collections;
 
 public class AIShipAgent : MonoBehaviour {
 
-	public Ship ship;
+	Ship ship;
 
 	//determines ship strategical behavior
 	public int aggressionLevel;
@@ -11,7 +11,6 @@ public class AIShipAgent : MonoBehaviour {
 	//current to seek
 	public Vector3 target;
 
-	public Transform harbor;
 	private Transform lootIsland;
 	
 	public Transform[] enemyShips = new Transform[3];
@@ -25,8 +24,7 @@ public class AIShipAgent : MonoBehaviour {
 		ship = GetComponent<Ship>();
 		ship.state = Ship.State.Roaming;
 		nav = GetComponent<NavMeshAgent>();
-		lootIsland = GameObject.Find("LootIsland").transform;
-		
+		lootIsland = GameObject.Find("LootIsland").transform;		
 	}
 	
 	// Update is called once per frame
@@ -41,7 +39,7 @@ public class AIShipAgent : MonoBehaviour {
 			
 			else
 			{
-				target = harbor.position;
+				target = ship.harbor.position;
 			}
 			
 			nav.destination = target;
@@ -87,12 +85,11 @@ public class AIShipAgent : MonoBehaviour {
 			nav.speed = 0;
 		}
 		
-		if(hit.transform == harbor)
+		if(hit.transform == ship.harbor)
 		{
 			ship.goldInHarbor += ship.goldInShip;
 			ship.goldInShip = 0;
-			ship.state = Ship.State.Shopping;
-				
+			ship.state = Ship.State.Shopping;				
 		}
 
 	}

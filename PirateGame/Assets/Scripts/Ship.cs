@@ -14,27 +14,24 @@ public class Ship : MonoBehaviour {
 			attackPower = ap;	
 		}		
 	}
-	
-	public GUIFunctions gui;
+
+	public Transform harbor;
+
 	public float maxSpeed;
 	public float minSpeed;
 	public float curSpeed;
 	public float turnSpeed;
-	//amount of gold looted per tick
-	public float lootingSpeed;
+	public float lootingSpeed; //amount of gold looted per tick
 	
 	private float lootingTime;
 	
-	//gold player has in their harbor
-	public int goldInHarbor;
-	//gold player is carrying on their ship
-	public int goldInShip;
-	//gold player has overall
-	public int goldTotal;
-	//max amount of gold a ship can carry
-	public int maxGold;
 
-	//cannons on each side of ship, 3 per side
+	public int goldInHarbor; //gold player has in their harbor
+	public int goldInShip; //gold player is carrying on their ship
+	public int goldTotal; //gold player has overall
+	public int maxGold; //max amount of gold a ship can carry
+
+	//cannons on each side of ship, 3 per side  TODO: make these arrays of size 3
 	public Cannon leftCannon;
 	public Cannon rightCannon;
 
@@ -64,14 +61,22 @@ public class Ship : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
-		//TODO: init variables
-		leftCannon = new Cannon (1);
-		rightCannon = new Cannon (1);
+		harbor = ((GameObject)GameObject.Find(this.name.Replace("Ship","Harbor"))).transform;
+
 		maxSpeed = 1;
 		minSpeed = 0.2f;
+		curSpeed = 0f;
 		turnSpeed = 50;
-		health = 5;
+
+		goldTotal = 100;
+		goldInHarbor = goldTotal;
 		maxGold = 100;
+
+		leftCannon = new Cannon (1);
+		rightCannon = new Cannon (1);
+
+		points = 0;
+		health = 5;
 	}
 	
 	// Update is called once per frame
@@ -93,7 +98,8 @@ public class Ship : MonoBehaviour {
 			if(goldInShip < maxGold)
 			{
 				goldInShip += 25;
-				gui.ShowNextCoin();
+				if(GetComponent<UserShipAgent>() != null)
+					GetComponent<UserShipAgent>().gui.ShowNextCoin();
 			}
 			lootingTime = lootingSpeed;
 		}
@@ -102,7 +108,6 @@ public class Ship : MonoBehaviour {
 		{
 			lootingTime -= Time.deltaTime;
 		}
-		//TODO: add proper functionality
 	}
 
 	//increase a ship's property
