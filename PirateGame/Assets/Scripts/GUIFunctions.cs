@@ -148,10 +148,9 @@ public class GUIFunctions : MonoBehaviour {
 	}
 
 	public void CrateUpgrade(){
-		//If the sails are already maxed out or there's
+		//If the crates are already maxed out or there's
 		//not enough loot to upgrade it, hide the shop GUI
 		//and show the appropriate message.
-		//TODO: change speed value to compare to
 		if (ship.maxGold == 600) {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
@@ -161,11 +160,32 @@ public class GUIFunctions : MonoBehaviour {
 			noLootMessage.SetActive(true);
 		}
 		
-		// Otherwise, upgrade the sails and subtract from loot each time.
+		// Otherwise, upgrade the crates and subtract from loot each time.
 		else {
 			ship.goldInHarbor -= 100;
 			ship.upgrade(Ship.Upgrade.MaxGold);
 			menuText = "You can now hold " + ship.maxGold + " gold!";
+		}
+	}
+
+	public void LootRateUpgrade(){
+		//If the looting rate is already maxed out or there's
+		//not enough loot to upgrade it, hide the shop GUI
+		//and show the appropriate message.
+		if (ship.lootingSpeed == 30) {
+			shoppingGUI.SetActive(false);
+			maxMessage.SetActive(true);
+		} 
+		else if (ship.goldInHarbor < 100) {
+			shoppingGUI.SetActive(false);
+			noLootMessage.SetActive(true);
+		}
+		
+		// Otherwise, upgrade the looting rate and subtract from loot each time.
+		else {
+			ship.goldInHarbor -= 100;
+			ship.upgrade(Ship.Upgrade.LootingSpeed);
+			menuText = "Your looting rate is now " + ship.lootingSpeed + "!";
 		}
 	}
 	
