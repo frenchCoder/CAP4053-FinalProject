@@ -18,11 +18,6 @@
 # Unity3D generated meta files
 *.pidb.meta
 
-#added by Jessica, Unity3D generated cs meta files
-*.cs.meta
-*.mat.meta
-*.prefab.meta
-*.meta
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
