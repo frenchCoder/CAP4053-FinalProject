@@ -7,7 +7,7 @@ public class Ship : MonoBehaviour {
 	[System.Serializable]
 	public class Cannon
 	{
-		public int attackPower;
+		public int attackPower;//health decremented from hit ship 
 		
 		public Cannon(int ap)
 		{
@@ -16,6 +16,7 @@ public class Ship : MonoBehaviour {
 	}
 
 	public Transform harbor;
+	public Transform explosion;
 
 	public float maxSpeed;
 	public float minSpeed;
@@ -31,11 +32,10 @@ public class Ship : MonoBehaviour {
 	public int goldTotal; //gold player has overall
 	public int maxGold; //max amount of gold a ship can carry
 
-	//cannons on each side of ship, 3 per side  TODO: make these arrays of size 3
+	//cannons on each side of ship
 	public Cannon leftCannon;
 	public Cannon rightCannon;
 
-	public float points;
 	public float health;
 	public State state;
 
@@ -63,10 +63,11 @@ public class Ship : MonoBehaviour {
 	{
 		harbor = ((GameObject)GameObject.Find(this.name.Replace("Ship","Harbor"))).transform;
 
+
 		maxSpeed = 1;
 		minSpeed = 0.2f;
 		curSpeed = 0f;
-		turnSpeed = 50;
+		turnSpeed = 100;
 
 		goldTotal = 100;
 		goldInHarbor = goldTotal;
@@ -75,7 +76,6 @@ public class Ship : MonoBehaviour {
 		leftCannon = new Cannon (1);
 		rightCannon = new Cannon (1);
 
-		points = 0;
 		health = 5;
 	}
 	
@@ -87,6 +87,16 @@ public class Ship : MonoBehaviour {
 			goldInHarbor += goldInShip;
 			goldTotal += goldInShip;//this variable keeps track of total gold collected, so it is never decreased by upgrade purchases
 			goldInShip = 0;
+		}
+
+		//respawn in harbor if health is zero
+		if (health == 0) 
+		{
+			transform.position = harbor.position;
+			health = 5;
+			print("ship respawned in harbor");
+			state = Ship.State.Shopping;
+
 		}
 	}
 
@@ -153,9 +163,7 @@ public class Ship : MonoBehaviour {
 			//get nearest ship in shooting range for each cannon
 			Vector3 rightdir = transform.right;
 			rightdir.Normalize ();
-			
-			//TODO: add enemy tags to AI ships
-			//TODO: do this for all 3 cannons
+
 			if (Physics.Raycast (transform.position, rightdir, out hit, sensorRange + buffer) && hit.transform.tag.Equals("Enemy"))
 			{
 				//get enemy ship component and implement damage
@@ -164,7 +172,17 @@ public class Ship : MonoBehaviour {
 				enemyShip.takeDamage(rightCannon);
 				
 				Debug.DrawRay(transform.position, rightdir * hit.distance, Color.red, 10);
+				Vector3 rotation = new Vector3(90,0,0);
+				Instantiate(explosion, new Vector3 (enemyShip.transform.position.x, 2, enemyShip.transform.position.z), Quaternion.Euler(rotation));
 				print ("hit ship");
+
+				//take gold if ship has been destroyed
+				if (enemyShip.health == 0)
+				{
+					int newamount = (goldInShip + enemyShip.goldInShip) % maxGold;
+					print ("collect gold from ship: " + newamount );
+					goldInShip = (goldInShip + enemyShip.goldInShip) % maxGold;
+				}
 				
 			}
 			else 
@@ -188,7 +206,17 @@ public class Ship : MonoBehaviour {
 				enemyShip.takeDamage(leftCannon);
 				
 				Debug.DrawRay(transform.position, leftdir * hit.distance, Color.red, 10);
-				print ("hit ship: " + hit.transform.name);				
+				Vector3 rotation = new Vector3(90,0,0);
+				Instantiate(explosion, new Vector3 (enemyShip.transform.position.x, 2, enemyShip.transform.position.z), Quaternion.Euler(rotation));
+				print ("hit ship: " + hit.transform.name);	
+
+				//take gold if ship has been destroyed
+				if (enemyShip.health == 0)
+				{
+					int newamount = (goldInShip + enemyShip.goldInShip) % maxGold;
+					print ("collect gold from ship: " + newamount );
+					goldInShip = (goldInShip + enemyShip.goldInShip) % maxGold;
+				}
 			}
 			else 
 			{
@@ -203,7 +231,7 @@ public class Ship : MonoBehaviour {
 		//ship can only be attacked when roaming
 		if (state == State.Roaming)
 		{
-			health -= cannon.attackPower;
+			health = (health <= cannon.attackPower) ? 0 : (health - cannon.attackPower);
 			print ("I, " + this.transform.name + ", have been hit!!");
 		}
 	}

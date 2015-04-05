@@ -104,6 +104,14 @@ public class UserShipAgent : MonoBehaviour {
 					print ("now shopping");
 				}
 			}
+
+
+			//allow user to keep moving at a slower pace in case they don't want to stop
+			//Rotate on input
+			transform.Rotate(Vector3.forward * -Input.GetAxis("Horizontal") * ship.turnSpeed * Time.deltaTime);			
+			//move forward at min speed
+			transform.position += transform.up * (ship.minSpeed) * Time.deltaTime;
+
 		}
 	}
 
@@ -116,20 +124,21 @@ public class UserShipAgent : MonoBehaviour {
 		if (hit.name.Equals(island.name) && (ship.state == Ship.State.Roaming))
 		{
 			ship.state = Ship.State.Waiting;
-			screenText = "Press Space to start looting the island \n and get some gold!";
+			screenText = "Press Space to start looting the island and get some gold!";
 		}
 
 		//if player hit the harbor
 		else if (hit.name.Equals(ship.harbor.name) && (ship.state == Ship.State.Roaming))
 		{
 			ship.state = Ship.State.Waiting;
-			screenText = "Press Space to enter the harbor, drop off your gold, \n and buy upgrades.";
+			screenText = "Press Space to enter the harbor, drop off your gold, and buy upgrades.";
 		}
 	}
 
 	void OnTriggerExit(Collider hit)
 	{
 		screenText = "";
+		ship.state = Ship.State.Roaming;
 	}
 
 	void OnGUI()

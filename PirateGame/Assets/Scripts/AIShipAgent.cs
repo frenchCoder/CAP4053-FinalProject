@@ -77,7 +77,7 @@ public class AIShipAgent : MonoBehaviour {
 
 	void OnTriggerEnter(Collider hit)
 	{
-		print ("hit a trigger");		
+		//print ("hit a trigger");		
 		
 		if(hit.transform == lootIsland)
 		{
