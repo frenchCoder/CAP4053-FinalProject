@@ -57,7 +57,7 @@ public class UserShipAgent : MonoBehaviour {
 
 		else if (ship.state == Ship.State.Looting)
 		{ 
-			screenText = "Press Space to set sail.";//TODO:move this to handle by gui && add to shopping state
+			screenText = "";//TODO:remove this
 			//listen for space where user wants to stop and roam again
 			if (Input.GetKeyDown(KeyCode.Space) || ship.goldInShip >= ship.maxGold)
 			{
