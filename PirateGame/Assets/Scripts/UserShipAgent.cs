@@ -5,9 +5,8 @@ public class UserShipAgent : MonoBehaviour {
 	
 	Ship ship;
 	public GUIFunctions gui;
-
+	public bool tutorialMode;
 	private Transform island;
-	private string screenText;
 	private Collider curhit;
 
 	// Use this for initialization
@@ -22,7 +21,7 @@ public class UserShipAgent : MonoBehaviour {
 		
 		ship = GetComponent<Ship>();
 		gui = ((GameObject)GameObject.Find("GUI_Manager")).GetComponent<GUIFunctions>();
-		screenText = "";
+		tutorialMode = true;
 		ship.state = Ship.State.Roaming; //Should probably start out as shopping & facing the harbor so they can get their first free upgrade when the game starts for the first time.
 		island = GameObject.Find ("LootIsland").transform;
 	}
@@ -57,7 +56,8 @@ public class UserShipAgent : MonoBehaviour {
 
 		else if (ship.state == Ship.State.Looting)
 		{ 
-			screenText = "";//TODO:remove this
+			if(tutorialMode)
+				gui.DisplayText(0);
 			//listen for space where user wants to stop and roam again
 			if (Input.GetKeyDown(KeyCode.Space) || ship.goldInShip >= ship.maxGold)
 			{
@@ -72,6 +72,9 @@ public class UserShipAgent : MonoBehaviour {
 
 		else if (ship.state == Ship.State.Shopping)
 		{
+			if(tutorialMode)
+				gui.DisplayText(0);
+
 			//TODO
 
 				//display text “press space to raise anchor”
@@ -124,26 +127,23 @@ public class UserShipAgent : MonoBehaviour {
 		if (hit.name.Equals(island.name) && (ship.state == Ship.State.Roaming))
 		{
 			ship.state = Ship.State.Waiting;
-			screenText = "Press Space to start looting the island and get some gold!";
+			if(tutorialMode)
+				gui.DisplayText(1);
 		}
 
 		//if player hit the harbor
 		else if (hit.name.Equals(ship.harbor.name) && (ship.state == Ship.State.Roaming))
 		{
 			ship.state = Ship.State.Waiting;
-			screenText = "Press Space to enter the harbor, drop off your gold, and buy upgrades.";
+			if(tutorialMode)
+				gui.DisplayText(2);
 		}
 	}
 
 	void OnTriggerExit(Collider hit)
 	{
-		screenText = "";
+		if(tutorialMode)
+			gui.DisplayText(0);
 		ship.state = Ship.State.Roaming;
-	}
-
-	void OnGUI()
-	{
-		GUI.Label (new Rect (0,0,190,800), screenText);
-	}
-	
+	}	
 }

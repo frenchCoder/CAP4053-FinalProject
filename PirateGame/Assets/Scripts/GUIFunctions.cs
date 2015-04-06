@@ -5,6 +5,8 @@ public class GUIFunctions : MonoBehaviour {
 	Ship ship;
 
 	//TODO: change from public to private and have Start create instances from the prefabs
+	private GameObject lootText;
+	private GameObject harborText;
 	public GameObject lootingGUI;
 	public GameObject shoppingGUI;
 	public GameObject maxMessage;
@@ -21,7 +23,11 @@ public class GUIFunctions : MonoBehaviour {
 	void Start () {
 		lootingCoins = FillCoins(10);
 		ship = GameObject.FindGameObjectWithTag("Player").GetComponent<Ship>();
+		lootText = (GameObject)GameObject.Instantiate(Resources.Load("GUI/LootText"));
+		harborText = (GameObject)GameObject.Instantiate(Resources.Load("GUI/HarborText"));
 
+		lootText.SetActive(false);
+		harborText.SetActive (false);
 		lootingGUI.SetActive (false);
 		shoppingGUI.SetActive (false);
 		maxMessage.SetActive (false);
@@ -45,7 +51,24 @@ public class GUIFunctions : MonoBehaviour {
 			open = true;
 		}
 	}
-		
+
+	public void DisplayText(int opt)
+	{
+		switch (opt)
+		{
+			case 0:
+				lootText.SetActive(false);
+				harborText.SetActive(false);
+				break;
+			case 1:
+				lootText.SetActive(true);
+				break;
+			case 2:
+				harborText.SetActive(true);
+				break;
+		}	
+	}
+
 	public GameObject[] FillCoins(int numCoins)
 	{
 		GameObject[] temp = new GameObject[numCoins];
