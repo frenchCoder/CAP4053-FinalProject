@@ -109,9 +109,7 @@ public class AIShipAgent : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider hit)
-	{
-		//print ("hit a trigger");		
-		
+	{		
 		if(hit.transform == lootIsland)
 		{
 			ship.state = Ship.State.Looting;
@@ -120,8 +118,6 @@ public class AIShipAgent : MonoBehaviour {
 		
 		if(hit.transform == ship.harbor)
 		{
-			ship.goldInHarbor += ship.goldInShip;
-			ship.goldInShip = 0;
 			ship.state = Ship.State.Shopping;				
 		}
 
