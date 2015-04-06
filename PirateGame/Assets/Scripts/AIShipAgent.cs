@@ -15,6 +15,9 @@ public class AIShipAgent : MonoBehaviour {
 	
 	public Transform[] enemyShips = new Transform[3];
 	
+	Transform closestShip;
+	float shipDist;
+	
 	NavMeshAgent nav;
 
 
@@ -24,17 +27,47 @@ public class AIShipAgent : MonoBehaviour {
 		ship = GetComponent<Ship>();
 		ship.state = Ship.State.Roaming;
 		nav = GetComponent<NavMeshAgent>();
-		lootIsland = GameObject.Find("LootIsland").transform;		
+		lootIsland = GameObject.Find("LootIsland").transform;
+		
+		enemyShips[0] = GameObject.Find("PlayerShip").transform;
+		
+		int i = 1;
+		foreach(GameObject g in GameObject.FindGameObjectsWithTag("Enemy"))
+		{
+			if(g.transform != transform)
+			{
+				enemyShips[i] = g.transform;
+				i++;
+			}
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
+		
+		GetClosestShip();
+		
 		if (ship.state == Ship.State.Roaming) 
 		{
 			if(ship.goldInShip < ship.maxGold)
 			{
-				target = lootIsland.position;
+				//if the island is closer
+				if(Vector3.Distance(lootIsland.position, transform.position) < shipDist)
+				{
+					target = lootIsland.position;
+				}
+				
+				//if an opposing ship is closer
+				else
+				{
+					//if the closest ship has enough gold to warrant an attack
+					if(closestShip.GetComponent<Ship>().goldInShip >= ship.maxGold - ship.goldInShip)
+					{
+						
+						target = closestShip.position - (-Vector3.Normalize(transform.position + closestShip.position));
+					}
+				}
 			}
 			
 			else
@@ -93,6 +126,28 @@ public class AIShipAgent : MonoBehaviour {
 		}
 
 	}
+	
+	void GetClosestShip()
+	{
+		float d = 1000f;
+		int i = 0;
+		
+		for(int j = 0; j < 3; j++)
+		{
+			if(Vector3.Distance(transform.position, enemyShips[j].position) < d)
+			{
+				d = Vector3.Distance(transform.position, enemyShips[j].position);
+				i = j;
+			}
+		}
+		
+		closestShip = enemyShips[i];
+		shipDist = d;
+		
+		
+	}
 
 
 }
+
+
