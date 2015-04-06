@@ -74,12 +74,11 @@ public class UserShipAgent : MonoBehaviour {
 		{
 			if(tutorialMode)
 				gui.DisplayText(0);
-
-			//TODO
-
-				//display text “press space to raise anchor”
-				//automatically unload gold off ship to harbor
-				//display shop menu
+			if (Input.GetKeyDown(KeyCode.Space))
+			{
+				gui.ReturnToSea ();
+				print ("done shopping");
+			}
 
 			//Note that, if the "shoppingGUI.SetActive(true);" line
 			//was put here, then the ShopGUI would constantly be on the
