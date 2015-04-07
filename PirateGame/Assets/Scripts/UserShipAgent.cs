@@ -5,13 +5,17 @@ public class UserShipAgent : MonoBehaviour {
 	
 	Ship ship;
 	public GUIFunctions gui;
-	public bool tutorialMode;
+	private bool tutorialMode = true;
 	private Transform island;
 	private Collider curhit;
+	private float coins;
+	private float count;
 
 	// Use this for initialization
 	void Start () 
 	{
+		coins = 8f;
+		count = 0f;
 		//TODO: init variables
 		/*
 			spawn user in their harbor
@@ -21,7 +25,6 @@ public class UserShipAgent : MonoBehaviour {
 		
 		ship = GetComponent<Ship>();
 		gui = ((GameObject)GameObject.Find("GUI_Manager")).GetComponent<GUIFunctions>();
-		tutorialMode = true;
 		ship.state = Ship.State.Roaming; //Should probably start out as shopping & facing the harbor so they can get their first free upgrade when the game starts for the first time.
 		island = GameObject.Find ("LootIsland").transform;
 	}
@@ -55,7 +58,14 @@ public class UserShipAgent : MonoBehaviour {
 		}
 
 		else if (ship.state == Ship.State.Looting)
-		{ 
+		{ 			
+			count += 1/ship.lootingSpeed;
+			if(count >= (coins + (5*ship.lootingSpeed)))
+			{
+				count = 0;
+				gui.ShowNextCoin();
+			}
+
 			if(tutorialMode)
 				gui.DisplayText(0);
 			//listen for space where user wants to stop and roam again

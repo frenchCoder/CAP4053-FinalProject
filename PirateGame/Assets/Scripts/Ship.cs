@@ -22,7 +22,7 @@ public class Ship : MonoBehaviour {
 	public float minSpeed;
 	public float curSpeed;
 	public float turnSpeed;
-	public float lootingSpeed; //amount of gold looted per tick
+	public float lootingSpeed; //lootingTime max
 	
 	private float lootingTime;
 	
@@ -77,6 +77,9 @@ public class Ship : MonoBehaviour {
 		rightCannon = new Cannon (1);
 
 		health = 5;
+
+		lootingSpeed = 1.5f;
+		lootingTime = lootingSpeed;
 	}
 	
 	// Update is called once per frame
@@ -108,15 +111,13 @@ public class Ship : MonoBehaviour {
 			if(goldInShip < maxGold)
 			{
 				goldInShip += 25;
-				if(GetComponent<UserShipAgent>() != null)
-					GetComponent<UserShipAgent>().gui.ShowNextCoin();
 			}
 			lootingTime = lootingSpeed;
 		}
 		
 		else
 		{
-			lootingTime -= Time.deltaTime;
+			lootingTime -= Time.deltaTime * (1/lootingSpeed);
 		}
 	}
 
@@ -140,7 +141,7 @@ public class Ship : MonoBehaviour {
 				maxGold += 25;
 				break;
 			case Upgrade.LootingSpeed:
-				lootingSpeed++;
+				lootingSpeed-=0.5f;
 				break;
 			default:
 				print ("no upgrades given");
@@ -164,11 +165,12 @@ public class Ship : MonoBehaviour {
 			Vector3 rightdir = transform.right;
 			rightdir.Normalize ();
 
-			if (Physics.Raycast (transform.position, rightdir, out hit, sensorRange + buffer) && hit.transform.tag.Equals("Enemy"))
+			if (Physics.Raycast (transform.position, rightdir, out hit, sensorRange + buffer) && (hit.transform.tag.Equals("Enemy") || hit.transform.tag.Equals("Player")))
 			{
 				//get enemy ship component and implement damage
 				GameObject enemy = hit.transform.gameObject;
 				Ship enemyShip = (Ship) enemy.GetComponent(typeof(Ship));
+				int gold = enemyShip.goldInShip;
 				enemyShip.takeDamage(rightCannon);
 				
 				Debug.DrawRay(transform.position, rightdir * hit.distance, Color.red, 10);
@@ -179,9 +181,9 @@ public class Ship : MonoBehaviour {
 				//take gold if ship has been destroyed
 				if (enemyShip.health == 0)
 				{
-					int newamount = (goldInShip + enemyShip.goldInShip) % maxGold;
+					int newamount = (goldInShip + gold) % (maxGold+1);
 					print ("collect gold from ship: " + newamount );
-					goldInShip = (goldInShip + enemyShip.goldInShip) % maxGold;
+					goldInShip = newamount;
 				}
 				
 			}

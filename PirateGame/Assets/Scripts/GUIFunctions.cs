@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class GUIFunctions : MonoBehaviour {
 	Ship ship;
@@ -11,16 +12,16 @@ public class GUIFunctions : MonoBehaviour {
 	public GameObject shoppingGUI;
 	public GameObject maxMessage;
 	public GameObject noLootMessage;
-
 	private GameObject[] lootingCoins;
 	private int lootCoinCount = 0;
-
+	private GameObject eventSystem; //Used to make currently selected item no longer selected - needed for "space" to work on shoppingGUI
 	private string menuText;
 
 	bool open;
 
 	// Use this for initialization
 	void Start () {
+		eventSystem = (GameObject)GameObject.Find("EventSystem");
 		lootingCoins = FillCoins(10);
 		ship = GameObject.FindGameObjectWithTag("Player").GetComponent<Ship>();
 		lootText = (GameObject)GameObject.Instantiate(Resources.Load("GUI/LootText"));
@@ -121,8 +122,8 @@ public class GUIFunctions : MonoBehaviour {
 			ship.goldInHarbor -= 100;
 			ship.upgrade (Ship.Upgrade.AttackPower);
 			menuText = "Your attack power is now " + ship.leftCannon.attackPower + "!";
-		}
-		
+		}		
+		eventSystem.GetComponent<EventSystem>().SetSelectedGameObject(shoppingGUI, null);
 	}
 	
 	//upgrade the health
@@ -144,7 +145,8 @@ public class GUIFunctions : MonoBehaviour {
 			ship.goldInHarbor -= 100;
 			ship.upgrade(Ship.Upgrade.Hp);
 			menuText = "Your hull strength is now " + ship.health + "!";
-		}
+		}		
+		eventSystem.GetComponent<EventSystem>().SetSelectedGameObject(shoppingGUI, null);
 	}
 	
 	//upgrade the speed
@@ -167,7 +169,8 @@ public class GUIFunctions : MonoBehaviour {
 			ship.goldInHarbor -= 100;
 			ship.upgrade(Ship.Upgrade.Speed);
 			menuText = "Your max speed is now " + ship.maxSpeed + "!";
-		}
+		}		
+		eventSystem.GetComponent<EventSystem>().SetSelectedGameObject(shoppingGUI, null);
 	}
 
 	public void CrateUpgrade(){
@@ -188,14 +191,15 @@ public class GUIFunctions : MonoBehaviour {
 			ship.goldInHarbor -= 100;
 			ship.upgrade(Ship.Upgrade.MaxGold);
 			menuText = "You can now hold " + ship.maxGold + " gold!";
-		}
+		}		
+		eventSystem.GetComponent<EventSystem>().SetSelectedGameObject(shoppingGUI, null);
 	}
 
 	public void LootRateUpgrade(){
 		//If the looting rate is already maxed out or there's
 		//not enough loot to upgrade it, hide the shop GUI
 		//and show the appropriate message.
-		if (ship.lootingSpeed == 30) {
+		if (ship.lootingSpeed == 0.5) {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 
@@ -210,6 +214,7 @@ public class GUIFunctions : MonoBehaviour {
 			ship.upgrade(Ship.Upgrade.LootingSpeed);
 			menuText = "Your looting rate is now " + ship.lootingSpeed + "!";
 		}
+		eventSystem.GetComponent<EventSystem>().SetSelectedGameObject(shoppingGUI, null);
 	}
 	
 	//return to roaming state on main board from shopping in harbor
@@ -218,6 +223,8 @@ public class GUIFunctions : MonoBehaviour {
 		//Close the shop GUI and change the ship's state to Roaming
 		shoppingGUI.SetActive(false);
 		lootingGUI.SetActive (false);
+		noLootMessage.SetActive(false);
+		maxMessage.SetActive(false);
 		//turn ship around
 		Transform playerObject = GameObject.Find ("PlayerShip").transform;
 		Vector3 temp = playerObject.rotation.eulerAngles;
@@ -227,8 +234,6 @@ public class GUIFunctions : MonoBehaviour {
 		ship.curSpeed = ship.minSpeed;
 		ship.state = Ship.State.Roaming;
 		menuText = "";
-		
-		print ("done shopping");
 		open = false;
 	}
 	
