@@ -14,16 +14,11 @@ public class GUIFunctions : MonoBehaviour {
 	public GameObject noLootMessage;
 
 	//The following variables keep track of how many upgrades there are so far.
-	private int cannonCount;
-	private int hullCount;
-	private int sailCount;
-	private int crateCount;
-	private int lootRateCount;
-	private string cannonNumber;
-	private string hullNumber;
-	private string sailNumber;
-	private string crateNumber;
-	private string lootRateNumber;
+	public int cannonCount = 0;
+	public int hullCount = 0;
+	public int sailCount = 0;
+	public int crateCount = 0;
+	public int lootRateCount = 0;
 
 	private GameObject[] lootingCoins;
 	private int lootCoinCount = 0;
@@ -47,12 +42,6 @@ public class GUIFunctions : MonoBehaviour {
 		maxMessage.SetActive (false);
 		noLootMessage.SetActive (false);
 
-		cannonCount = 0;
-		hullCount = 0;
-		sailCount = 0;
-		crateCount = 0;
-		lootRateCount = 0;
-
 		open = false;
 		menuText = "";
 	}
@@ -69,15 +58,6 @@ public class GUIFunctions : MonoBehaviour {
 		{
 			lootingGUI.SetActive(true);
 			open = true;
-		}
-
-		//Show number of upgrades purchased so far if the shopping GUI is active
-		if(shoppingGUI.activeInHierarchy){
-			cannonNumber = cannonCount.ToString();
-			hullNumber = hullCount.ToString();
-			sailNumber = sailCount.ToString();
-			crateNumber = crateCount.ToString();
-			lootRateNumber = lootRateCount.ToString();
 		}
 	}
 
@@ -269,11 +249,7 @@ public class GUIFunctions : MonoBehaviour {
 		ship.curSpeed = ship.minSpeed;
 		ship.state = Ship.State.Roaming;
 		menuText = "";
-		cannonNumber = "";
-		hullNumber = "";
-		sailNumber = "";
-		crateNumber = "";
-		lootRateNumber = "";
+
 		open = false;
 	}
 	
@@ -292,10 +268,5 @@ public class GUIFunctions : MonoBehaviour {
 	void OnGUI()
 	{
 		GUI.Label (new Rect (300,0,190,800), menuText);
-		GUI.Label (new Rect (375,135,190,800), cannonNumber);
-		GUI.Label (new Rect (375,170,190,800), hullNumber);
-		GUI.Label (new Rect (375,205,190,800), sailNumber);
-		GUI.Label (new Rect (375,240,190,800), crateNumber);
-		GUI.Label (new Rect (375,275,190,800), lootRateNumber);
 	}
 }
