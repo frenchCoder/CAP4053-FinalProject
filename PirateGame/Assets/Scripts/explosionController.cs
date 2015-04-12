@@ -16,7 +16,6 @@ public class explosionController : MonoBehaviour {
 		//destroy this object after it has animated once
 		if (animator.GetCurrentAnimatorStateInfo(0).IsTag("done"))
 		{
-			print ("destroy explode sprite");
 			Destroy (this.gameObject);
 		}
 

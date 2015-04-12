@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class AIShipAgent : MonoBehaviour {
@@ -76,13 +76,6 @@ public class AIShipAgent : MonoBehaviour {
 			}
 			
 			nav.destination = target;
-			//if ship.state is roaming
-			//update target based on location and aggression level
-			//seek(target)
-
-			//ship.attack() 
-			//if enemy ship is within a hittable range
-			//if ship.enemyShipOnRight || ship.enemyShipOnLeft 
 		}
 		
 		else if (ship.state == Ship.State.Looting)
@@ -103,6 +96,11 @@ public class AIShipAgent : MonoBehaviour {
 		{
 			//TODO: Upgrade code goes here
 			ship.state = Ship.State.Roaming;
+		}
+		//don't let ship move when it is dying and respawning
+		else if (ship.state == Ship.State.Dying)
+		{
+			nav.destination = transform.position;
 		}
 		
 		
@@ -138,8 +136,7 @@ public class AIShipAgent : MonoBehaviour {
 		}
 		
 		closestShip = enemyShips[i];
-		shipDist = d;
-		
+		shipDist = d;	
 		
 	}
 

@@ -25,7 +25,7 @@ public class UserShipAgent : MonoBehaviour {
 		
 		ship = GetComponent<Ship>();
 		gui = ((GameObject)GameObject.Find("GUI_Manager")).GetComponent<GUIFunctions>();
-		ship.state = Ship.State.Roaming; //Should probably start out as shopping & facing the harbor so they can get their first free upgrade when the game starts for the first time.
+		ship.state = Ship.State.Roaming;
 		island = GameObject.Find ("LootIsland").transform;
 	}
 	
@@ -42,7 +42,7 @@ public class UserShipAgent : MonoBehaviour {
 
 			//Increase/decrease speed on input
 			ship.curSpeed += Input.GetAxis("Vertical") * Time.deltaTime;			
-			ship.curSpeed = Mathf.Clamp(ship.curSpeed, 0.5f, ship.maxSpeed);
+			ship.curSpeed = Mathf.Clamp(ship.curSpeed, ship.minSpeed, ship.maxSpeed);
 
 			//'Q' shoot left cannons
 			if (Input.GetKeyUp(KeyCode.Q))
@@ -97,7 +97,7 @@ public class UserShipAgent : MonoBehaviour {
 			//underneath the messages for maxed upgrades and no loot.
 
 		}
-		//TODO: should be able to move in waiting state so you can move around the island, not just get stopped on one side
+
 		else if (ship.state == Ship.State.Waiting) 
 		{
 			//listen for space where user wants to start looting or shopping
@@ -117,7 +117,6 @@ public class UserShipAgent : MonoBehaviour {
 				}
 			}
 
-
 			//allow user to keep moving at a slower pace in case they don't want to stop
 			//Rotate on input
 			transform.Rotate(Vector3.forward * -Input.GetAxis("Horizontal") * ship.turnSpeed * Time.deltaTime);			
@@ -129,7 +128,7 @@ public class UserShipAgent : MonoBehaviour {
 
 	void OnTriggerEnter(Collider hit)
 	{
-		print("hit a trigger: " + hit.name);
+		//print("hit a trigger: " + hit.name);
 		curhit = hit;
 
 		//if player hit the island
@@ -153,6 +152,10 @@ public class UserShipAgent : MonoBehaviour {
 	{
 		if(tutorialMode)
 			gui.DisplayText(0);
-		ship.state = Ship.State.Roaming;
+
+		if (ship.state == Ship.State.Waiting) 
+		{
+			ship.state = Ship.State.Roaming;		
+		}
 	}	
 }

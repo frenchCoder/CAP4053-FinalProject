@@ -16,7 +16,11 @@ public class Ship : MonoBehaviour {
 	}
 
 	public Transform harbor;
-	public Transform explosion;
+	public Transform cannonsprite;
+
+	//starting position and rotation, return to this initial position after each death
+	public Vector3 initPosition;
+	public Quaternion initRotation;
 
 	public float maxSpeed;
 	public float minSpeed;
@@ -39,13 +43,19 @@ public class Ship : MonoBehaviour {
 	public float health;
 	public State state;
 
+	//control shooting rate for cannons
+	public float shootingRate;
+	private bool canShootLeft;
+	private bool canShootRight;
+
 	//states a ship can be in at any time
 	public enum State
 	{
 		Looting,
 		Shopping,//in harbor
 		Roaming,
-		Waiting
+		Waiting,
+		Dying
 	};
 
 	public enum Upgrade
@@ -62,7 +72,7 @@ public class Ship : MonoBehaviour {
 	void Start () 
 	{
 		harbor = ((GameObject)GameObject.Find(this.name.Replace("Ship","Harbor"))).transform;
-
+		cannonsprite = GameObject.Find("cannon").transform;
 
 		maxSpeed = 1;
 		minSpeed = 0.2f;
@@ -80,6 +90,12 @@ public class Ship : MonoBehaviour {
 
 		lootingSpeed = 1.5f;
 		lootingTime = lootingSpeed;
+
+		canShootLeft = canShootRight = true;
+		shootingRate = 0.5f;
+
+		initPosition = transform.position;
+		initRotation = transform.rotation;
 	}
 	
 	// Update is called once per frame
@@ -95,10 +111,10 @@ public class Ship : MonoBehaviour {
 		//respawn in harbor if health is zero
 		if (health == 0) 
 		{
-			transform.position = harbor.position;
 			health = 5;
-			print("ship respawned in harbor");
-			state = Ship.State.Shopping;
+
+			state = Ship.State.Dying;
+			StartCoroutine(respawnInHarbor());
 
 		}
 	}
@@ -130,12 +146,11 @@ public class Ship : MonoBehaviour {
 				maxSpeed++;
 				break;
 			case Upgrade.AttackPower:
-				//TODO: determine how to increase attack power
 				leftCannon.attackPower++;
 				rightCannon.attackPower++;
 				break;
 			case Upgrade.Hp:
-				health += 5;//TODO: determine final value
+				health += 5;
 				break;
 			case Upgrade.MaxGold:
 				maxGold += 25;
@@ -159,8 +174,10 @@ public class Ship : MonoBehaviour {
 		int sensorRange = 1;
 		
 		//right side
-		if (side.Equals("R"))
+		if (side.Equals("R") && canShootRight)
 		{
+			StartCoroutine(loadRightCannons());
+
 			//get nearest ship in shooting range for each cannon
 			Vector3 rightdir = transform.right;
 			rightdir.Normalize ();
@@ -168,16 +185,29 @@ public class Ship : MonoBehaviour {
 			if (Physics.Raycast (transform.position, rightdir, out hit, sensorRange + buffer) && (hit.transform.tag.Equals("Enemy") || hit.transform.tag.Equals("Player")))
 			{
 				//get enemy ship component and implement damage
-				GameObject enemy = hit.transform.gameObject;
-				Ship enemyShip = (Ship) enemy.GetComponent(typeof(Ship));
+				Ship enemyShip = (Ship) hit.transform.GetComponent(typeof(Ship));
+
 				int gold = enemyShip.goldInShip;
 				enemyShip.takeDamage(rightCannon);
 				
-				Debug.DrawRay(transform.position, rightdir * hit.distance, Color.red, 10);
-				Vector3 rotation = new Vector3(90,0,0);
-				Instantiate(explosion, new Vector3 (enemyShip.transform.position.x, 2, enemyShip.transform.position.z), Quaternion.Euler(rotation));
-				print ("hit ship");
+				//Debug.DrawRay(transform.position, rightdir * hit.distance, Color.red, 10);
+				Vector3 startPoint = transform.position + rightdir * 0.2f;			
+				Vector3 endPoint = transform.position + rightdir * hit.distance;	
+				
+				Transform clone = (Transform)Instantiate(cannonsprite, startPoint, Quaternion.identity);
 
+				cannonController cannonscript = clone.GetComponent<cannonController>();
+
+				//cannon only explodes if it hits a roaming ship
+				if (enemyShip.state == Ship.State.Roaming)
+				{
+					cannonscript.init(transform, endPoint, true);					
+				}
+				else 
+				{
+					cannonscript.init(transform, endPoint, false);
+				}
+			
 				//take gold if ship has been destroyed
 				if (enemyShip.health == 0)
 				{
@@ -189,28 +219,49 @@ public class Ship : MonoBehaviour {
 			}
 			else 
 			{
-				Debug.DrawRay(transform.position, rightdir * sensorRange, Color.red, 10);
+				//Debug.DrawRay(transform.position, rightdir * sensorRange, Color.red, 10);
+
+				Vector3 startPoint = transform.position + rightdir * 0.2f;					
+				Vector3 endPoint = transform.position + rightdir * sensorRange;
+				
+				Transform clone = (Transform)Instantiate(cannonsprite, startPoint, Quaternion.identity);
+				
+				cannonController cannonscript = clone.GetComponent<cannonController>();
+				cannonscript.init(transform, endPoint, false);
 			}
 		}
 		//left side
-		else if (side.Equals("L"))
+		else if (side.Equals("L") && canShootLeft)
 		{
+			StartCoroutine(loadLeftCannons());
+
 			//get nearest ship in shooting range for each cannon
 			Vector3 leftdir = -transform.right;
 			leftdir.Normalize ();
-			
-			//TODO: add enemy tags to AI ships
-			//TODO: do this for all 3 cannons
+
 			if (Physics.Raycast (transform.position, leftdir, out hit, sensorRange + buffer) && hit.transform.tag.Equals("Enemy"))
 			{
 				//get enemy ship component and implement damage
 				Ship enemyShip = (Ship) hit.transform.GetComponent(typeof(Ship));
 				enemyShip.takeDamage(leftCannon);
 				
-				Debug.DrawRay(transform.position, leftdir * hit.distance, Color.red, 10);
-				Vector3 rotation = new Vector3(90,0,0);
-				Instantiate(explosion, new Vector3 (enemyShip.transform.position.x, 2, enemyShip.transform.position.z), Quaternion.Euler(rotation));
-				print ("hit ship: " + hit.transform.name);	
+				//Debug.DrawRay(transform.position, leftdir * hit.distance, Color.red, 10);
+				Vector3 startPoint = transform.position + leftdir * 0.2f;
+				Vector3 endPoint = transform.position + leftdir * hit.distance;
+				
+				Transform clone = (Transform)Instantiate(cannonsprite, startPoint, Quaternion.identity);
+				
+				cannonController cannonscript = clone.GetComponent<cannonController>();
+
+				//cannon only explodes if it hits a roaming ship
+				if (enemyShip.state == Ship.State.Roaming)
+				{
+					cannonscript.init(transform, endPoint, true);					
+				}
+				else 
+				{
+					cannonscript.init(transform, endPoint, false);
+				}
 
 				//take gold if ship has been destroyed
 				if (enemyShip.health == 0)
@@ -222,7 +273,15 @@ public class Ship : MonoBehaviour {
 			}
 			else 
 			{
-				Debug.DrawRay(transform.position, leftdir * sensorRange, Color.red, 10);
+				//Debug.DrawRay(transform.position, leftdir * sensorRange, Color.red, 10);
+
+				Vector3 startPoint = transform.position + leftdir * 0.2f;					
+				Vector3 endPoint = transform.position + leftdir * sensorRange;
+				
+				Transform clone = (Transform)Instantiate(cannonsprite, startPoint, Quaternion.identity);
+				
+				cannonController cannonscript = clone.GetComponent<cannonController>();
+				cannonscript.init(transform, endPoint, false);
 			}	
 		}
 	}
@@ -234,8 +293,54 @@ public class Ship : MonoBehaviour {
 		if (state == State.Roaming)
 		{
 			health = (health <= cannon.attackPower) ? 0 : (health - cannon.attackPower);
-			print ("I, " + this.transform.name + ", have been hit!!");
 		}
+	}
+
+	IEnumerator loadLeftCannons()
+	{
+		canShootLeft = false;
+		yield return new WaitForSeconds(shootingRate);
+		canShootLeft=true;
+	}
+
+	IEnumerator loadRightCannons()
+	{
+		canShootRight = false;
+		yield return new WaitForSeconds(shootingRate);
+		canShootRight=true;
+	}
+
+	//make ship flash in current pos, then put ship back in harbor and flash more before returning to roaming state
+	IEnumerator respawnInHarbor()
+	{
+		Renderer renderer = GetComponent<Renderer>();
+
+		//flash ship for 2 seconds in current location
+		for(int i = 0; i < 5; i++)
+		{
+			renderer.enabled = true;
+			yield return new WaitForSeconds(0.1f);
+			renderer.enabled = false;
+			yield return new WaitForSeconds(0.1f);
+		}
+		renderer.enabled = true;
+
+		//move ship to initial position
+		transform.position = initPosition;
+		transform.rotation = initRotation;
+
+		//flash ship for 2 seconds in harbor
+		for(int i = 0; i < 5; i++)
+		{
+			renderer.enabled = true;
+			yield return new WaitForSeconds(0.1f);
+			renderer.enabled = false;
+			yield return new WaitForSeconds(0.1f);
+		}
+		renderer.enabled = true;
+
+		//back to normal in harbor
+		state = State.Roaming;
 	}
 
 }
