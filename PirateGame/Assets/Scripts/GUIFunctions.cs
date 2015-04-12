@@ -225,6 +225,7 @@ public class GUIFunctions : MonoBehaviour {
 		lootingGUI.SetActive (false);
 		noLootMessage.SetActive(false);
 		maxMessage.SetActive(false);
+
 		//turn ship around
 		Transform playerObject = GameObject.Find ("PlayerShip").transform;
 		Vector3 temp = playerObject.rotation.eulerAngles;
@@ -233,6 +234,7 @@ public class GUIFunctions : MonoBehaviour {
 		playerObject.position += transform.up * ship.curSpeed * Time.deltaTime;
 		ship.curSpeed = ship.minSpeed;
 		ship.state = Ship.State.Roaming;
+
 		menuText = "";
 		open = false;
 	}
