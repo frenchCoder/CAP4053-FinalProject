@@ -12,6 +12,14 @@ public class GUIFunctions : MonoBehaviour {
 	public GameObject shoppingGUI;
 	public GameObject maxMessage;
 	public GameObject noLootMessage;
+
+	//The following variables keep track of how many upgrades there are so far.
+	public int cannonCount = 0;
+	public int hullCount = 0;
+	public int sailCount = 0;
+	public int crateCount = 0;
+	public int lootRateCount = 0;
+
 	private GameObject[] lootingCoins;
 	private int lootCoinCount = 0;
 	private GameObject eventSystem; //Used to make currently selected item no longer selected - needed for "space" to work on shoppingGUI
@@ -119,6 +127,7 @@ public class GUIFunctions : MonoBehaviour {
 		
 		// Otherwise, upgrade the cannon and subtract from loot each time.
 		else {
+			cannonCount++;
 			ship.goldInHarbor -= 100;
 			ship.upgrade (Ship.Upgrade.AttackPower);
 			menuText = "Your attack power is now " + ship.leftCannon.attackPower + "!";
@@ -142,6 +151,7 @@ public class GUIFunctions : MonoBehaviour {
 		
 		// Otherwise, upgrade the hull and subtract from loot each time.
 		else {
+			hullCount++;
 			ship.goldInHarbor -= 100;
 			ship.upgrade(Ship.Upgrade.Hp);
 			menuText = "Your hull strength is now " + ship.health + "!";
@@ -166,6 +176,7 @@ public class GUIFunctions : MonoBehaviour {
 		
 		// Otherwise, upgrade the sails and subtract from loot each time.
 		else {
+			sailCount++;
 			ship.goldInHarbor -= 100;
 			ship.upgrade(Ship.Upgrade.Speed);
 			menuText = "Your max speed is now " + ship.maxSpeed + "!";
@@ -188,6 +199,7 @@ public class GUIFunctions : MonoBehaviour {
 		
 		// Otherwise, upgrade the crates and subtract from loot each time.
 		else {
+			crateCount++;
 			ship.goldInHarbor -= 100;
 			ship.upgrade(Ship.Upgrade.MaxGold);
 			menuText = "You can now hold " + ship.maxGold + " gold!";
@@ -210,6 +222,7 @@ public class GUIFunctions : MonoBehaviour {
 		
 		// Otherwise, upgrade the looting rate and subtract from loot each time.
 		else {
+			lootRateCount++;
 			ship.goldInHarbor -= 100;
 			ship.upgrade(Ship.Upgrade.LootingSpeed);
 			menuText = "Your looting rate is now " + ship.lootingSpeed + "!";
@@ -225,7 +238,7 @@ public class GUIFunctions : MonoBehaviour {
 		lootingGUI.SetActive (false);
 		noLootMessage.SetActive(false);
 		maxMessage.SetActive(false);
-
+		
 		//turn ship around
 		Transform playerObject = GameObject.Find ("PlayerShip").transform;
 		Vector3 temp = playerObject.rotation.eulerAngles;
@@ -236,6 +249,7 @@ public class GUIFunctions : MonoBehaviour {
 		ship.state = Ship.State.Roaming;
 
 		menuText = "";
+
 		open = false;
 	}
 	
