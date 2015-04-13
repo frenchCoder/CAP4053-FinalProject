@@ -40,7 +40,8 @@ public class Ship : MonoBehaviour {
 	public Cannon leftCannon;
 	public Cannon rightCannon;
 
-	public float health;
+	public int health;
+	public int maxHealth;
 	public State state;
 
 	//control shooting rate for cannons
@@ -86,7 +87,7 @@ public class Ship : MonoBehaviour {
 		leftCannon = new Cannon (1);
 		rightCannon = new Cannon (1);
 
-		health = 5;
+		health = maxHealth = 5;
 
 		lootingSpeed = 1.5f;
 		lootingTime = lootingSpeed;
@@ -108,10 +109,11 @@ public class Ship : MonoBehaviour {
 			goldInShip = 0;
 		}
 
-		//respawn in harbor if health is zero
+		//respawn in harbor if health is zero, lose all gold in ship
 		if (health == 0) 
 		{
-			health = 5;
+			health = maxHealth;
+			goldInShip = 0;
 
 			state = Ship.State.Dying;
 			StartCoroutine(respawnInHarbor());
@@ -150,7 +152,8 @@ public class Ship : MonoBehaviour {
 				rightCannon.attackPower++;
 				break;
 			case Upgrade.Hp:
-				health += 5;
+				maxHealth++;
+				health = maxHealth;
 				break;
 			case Upgrade.MaxGold:
 				maxGold += 25;
@@ -211,7 +214,7 @@ public class Ship : MonoBehaviour {
 				//take gold if ship has been destroyed
 				if (enemyShip.health == 0)
 				{
-					int newamount = (goldInShip + gold) % (maxGold+1);
+					int newamount = (goldInShip + gold) % (maxGold);
 					print ("collect gold from ship: " + newamount );
 					goldInShip = newamount;
 				}
