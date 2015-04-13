@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class AIShipAgent : MonoBehaviour {
@@ -9,23 +9,26 @@ public class AIShipAgent : MonoBehaviour {
 	public int aggressionLevel;
 
 	//current to seek
-	public Vector3 target;
+	private Vector3 target;
 
 	private Transform lootIsland;
 	
-	public Transform[] enemyShips = new Transform[3];
+	private Transform[] enemyShips = new Transform[3];
 	
 	Transform closestShip;
 	float shipDist;
 	
 	NavMeshAgent nav;
 
-
+	
+	public bool debug;
+	
 	// Use this for initialization
 	void Start () 
 	{
 		ship = GetComponent<Ship>();
 		ship.state = Ship.State.Roaming;
+		ship.shootingRate = 0.75f;//longer wait time for AI ships than player
 		nav = GetComponent<NavMeshAgent>();
 		lootIsland = GameObject.Find("LootIsland").transform;
 		
@@ -40,6 +43,8 @@ public class AIShipAgent : MonoBehaviour {
 				i++;
 			}
 		}
+		
+		Time.timeScale = 2;
 	}
 	
 	// Update is called once per frame
@@ -48,41 +53,69 @@ public class AIShipAgent : MonoBehaviour {
 		
 		GetClosestShip();
 		
+		//if roaming
 		if (ship.state == Ship.State.Roaming) 
 		{
-			if(ship.goldInShip < ship.maxGold)
+			RaycastHit hit;
+			if(Physics.Raycast(transform.position, transform.right, out hit, 1))
 			{
-				//if the island is closer
-				if(Vector3.Distance(lootIsland.position, transform.position) < shipDist)
+				if(hit.transform.gameObject.layer == 8)
 				{
-					target = lootIsland.position;
-				}
-				
-				//if an opposing ship is closer
-				else
-				{
-					//if the closest ship has enough gold to warrant an attack
-					if(closestShip.GetComponent<Ship>().goldInShip >= ship.maxGold - ship.goldInShip)
-					{
-						
-						target = closestShip.position - (-Vector3.Normalize(transform.position + closestShip.position));
-					}
+					ship.attack("R");
 				}
 			}
 			
+			else if(Physics.Raycast(transform.position, -transform.right, out hit, 1))
+			{
+				if(hit.transform.gameObject.layer == 8)
+				{
+					ship.attack("L");
+				}
+			}
+				
+			
+			//if able to get gold
+			if(ship.goldInShip < ship.maxGold)
+			{
+				//if ship is within attack range
+				if(shipDist < aggressionLevel)
+				{
+					//if the island is closer
+					if(Vector3.Distance(lootIsland.position, transform.position) < shipDist)
+					{
+						target = lootIsland.position;
+						if (debug) print("lootisland");
+					}
+				
+					//if an opposing ship is closer
+					else
+					{
+						//if the closest ship has enough gold to warrant an attack
+						if(closestShip.GetComponent<Ship>().goldInShip >= ship.maxGold - ship.goldInShip)
+						{
+							if(debug) print(closestShip.GetComponent<Ship>().goldInShip);
+							target = closestShip.position - (-Vector3.Normalize(transform.position + closestShip.position));
+							if (debug) print("othership");
+						}
+					}
+				}
+				
+				//if ship is not within agression level then go for the island
+				else
+				{
+					target = lootIsland.position;
+					if (debug) print("lootisland");
+				}
+			}
+			
+			//return to island when ship is full
 			else
 			{
 				target = ship.harbor.position;
+				if (debug) print("harbor");
 			}
 			
 			nav.destination = target;
-			//if ship.state is roaming
-			//update target based on location and aggression level
-			//seek(target)
-
-			//ship.attack() 
-			//if enemy ship is within a hittable range
-			//if ship.enemyShipOnRight || ship.enemyShipOnLeft 
 		}
 		
 		else if (ship.state == Ship.State.Looting)
@@ -103,6 +136,14 @@ public class AIShipAgent : MonoBehaviour {
 		{
 			//TODO: Upgrade code goes here
 			ship.state = Ship.State.Roaming;
+			target = lootIsland.position;
+			
+		}
+		
+		//don't let ship move when it is dying and respawning
+		else if (ship.state == Ship.State.Dying)
+		{
+			nav.destination = transform.position;
 		}
 		
 		
@@ -118,7 +159,11 @@ public class AIShipAgent : MonoBehaviour {
 		
 		if(hit.transform == ship.harbor)
 		{
-			ship.state = Ship.State.Shopping;				
+			if(ship.goldInShip > 0)
+			{
+				if (debug) print("shopping");
+				ship.state = Ship.State.Shopping;
+			}
 		}
 
 	}
@@ -138,8 +183,7 @@ public class AIShipAgent : MonoBehaviour {
 		}
 		
 		closestShip = enemyShips[i];
-		shipDist = d;
-		
+		shipDist = d;	
 		
 	}
 

@@ -12,6 +12,14 @@ public class GUIFunctions : MonoBehaviour {
 	public GameObject shoppingGUI;
 	public GameObject maxMessage;
 	public GameObject noLootMessage;
+
+	//The following variables keep track of how many upgrades there are so far.
+	public int cannonCount = 0;
+	public int hullCount = 0;
+	public int sailCount = 0;
+	public int crateCount = 0;
+	public int lootRateCount = 0;
+
 	private GameObject[] lootingCoins;
 	private int lootCoinCount = 0;
 	private GameObject eventSystem; //Used to make currently selected item no longer selected - needed for "space" to work on shoppingGUI
@@ -119,6 +127,7 @@ public class GUIFunctions : MonoBehaviour {
 		
 		// Otherwise, upgrade the cannon and subtract from loot each time.
 		else {
+			cannonCount++;
 			ship.goldInHarbor -= 100;
 			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade (Ship.Upgrade.AttackPower);
@@ -132,7 +141,7 @@ public class GUIFunctions : MonoBehaviour {
 		//If the hull is already maxed out or there's
 		//not enough loot to upgrade it, hide the shop GUI
 		//and show the appropriate message.
-		if (ship.health == 5) {
+		if (ship.maxHealth == 7) {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 
@@ -143,6 +152,7 @@ public class GUIFunctions : MonoBehaviour {
 		
 		// Otherwise, upgrade the hull and subtract from loot each time.
 		else {
+			hullCount++;
 			ship.goldInHarbor -= 100;
 			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.Hp);
@@ -168,6 +178,7 @@ public class GUIFunctions : MonoBehaviour {
 		
 		// Otherwise, upgrade the sails and subtract from loot each time.
 		else {
+			sailCount++;
 			ship.goldInHarbor -= 100;
 			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.Speed);
@@ -191,6 +202,7 @@ public class GUIFunctions : MonoBehaviour {
 		
 		// Otherwise, upgrade the crates and subtract from loot each time.
 		else {
+			crateCount++;
 			ship.goldInHarbor -= 100;
 			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.MaxGold);
@@ -214,6 +226,7 @@ public class GUIFunctions : MonoBehaviour {
 		
 		// Otherwise, upgrade the looting rate and subtract from loot each time.
 		else {
+			lootRateCount++;
 			ship.goldInHarbor -= 100;
 			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.LootingSpeed);
@@ -230,6 +243,7 @@ public class GUIFunctions : MonoBehaviour {
 		lootingGUI.SetActive (false);
 		noLootMessage.SetActive(false);
 		maxMessage.SetActive(false);
+		
 		//turn ship around
 		Transform playerObject = GameObject.Find ("PlayerShip").transform;
 		Vector3 temp = playerObject.rotation.eulerAngles;
@@ -238,7 +252,9 @@ public class GUIFunctions : MonoBehaviour {
 		playerObject.position += transform.up * ship.curSpeed * Time.deltaTime;
 		ship.curSpeed = ship.minSpeed;
 		ship.state = Ship.State.Roaming;
+
 		menuText = "";
+
 		open = false;
 	}
 	
