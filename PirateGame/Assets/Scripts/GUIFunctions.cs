@@ -129,6 +129,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			cannonCount++;
 			ship.goldInHarbor -= 100;
+			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade (Ship.Upgrade.AttackPower);
 			menuText = "Your attack power is now " + ship.leftCannon.attackPower + "!";
 		}		
@@ -153,6 +154,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			hullCount++;
 			ship.goldInHarbor -= 100;
+			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.Hp);
 			menuText = "Your hull strength is now " + ship.health + "!";
 		}		
@@ -178,6 +180,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			sailCount++;
 			ship.goldInHarbor -= 100;
+			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.Speed);
 			menuText = "Your max speed is now " + ship.maxSpeed + "!";
 		}		
@@ -201,6 +204,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			crateCount++;
 			ship.goldInHarbor -= 100;
+			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.MaxGold);
 			menuText = "You can now hold " + ship.maxGold + " gold!";
 		}		
@@ -224,6 +228,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			lootRateCount++;
 			ship.goldInHarbor -= 100;
+			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.LootingSpeed);
 			menuText = "Your looting rate is now " + ship.lootingSpeed + "!";
 		}
