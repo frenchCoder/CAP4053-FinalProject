@@ -140,7 +140,7 @@ public class GUIFunctions : MonoBehaviour {
 		//If the hull is already maxed out or there's
 		//not enough loot to upgrade it, hide the shop GUI
 		//and show the appropriate message.
-		if (ship.health == 5) {
+		if (ship.maxHealth == 7) {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 

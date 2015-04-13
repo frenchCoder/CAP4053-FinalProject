@@ -28,6 +28,7 @@ public class AIShipAgent : MonoBehaviour {
 	{
 		ship = GetComponent<Ship>();
 		ship.state = Ship.State.Roaming;
+		ship.shootingRate = 0.75f;//longer wait time for AI ships than player
 		nav = GetComponent<NavMeshAgent>();
 		lootIsland = GameObject.Find("LootIsland").transform;
 		
