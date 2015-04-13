@@ -120,6 +120,7 @@ public class GUIFunctions : MonoBehaviour {
 		// Otherwise, upgrade the cannon and subtract from loot each time.
 		else {
 			ship.goldInHarbor -= 100;
+			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade (Ship.Upgrade.AttackPower);
 			menuText = "Your attack power is now " + ship.leftCannon.attackPower + "!";
 		}		
@@ -143,6 +144,7 @@ public class GUIFunctions : MonoBehaviour {
 		// Otherwise, upgrade the hull and subtract from loot each time.
 		else {
 			ship.goldInHarbor -= 100;
+			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.Hp);
 			menuText = "Your hull strength is now " + ship.health + "!";
 		}		
@@ -167,6 +169,7 @@ public class GUIFunctions : MonoBehaviour {
 		// Otherwise, upgrade the sails and subtract from loot each time.
 		else {
 			ship.goldInHarbor -= 100;
+			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.Speed);
 			menuText = "Your max speed is now " + ship.maxSpeed + "!";
 		}		
@@ -189,6 +192,7 @@ public class GUIFunctions : MonoBehaviour {
 		// Otherwise, upgrade the crates and subtract from loot each time.
 		else {
 			ship.goldInHarbor -= 100;
+			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.MaxGold);
 			menuText = "You can now hold " + ship.maxGold + " gold!";
 		}		
@@ -211,6 +215,7 @@ public class GUIFunctions : MonoBehaviour {
 		// Otherwise, upgrade the looting rate and subtract from loot each time.
 		else {
 			ship.goldInHarbor -= 100;
+			ship.goldGUI.updateValue(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.LootingSpeed);
 			menuText = "Your looting rate is now " + ship.lootingSpeed + "!";
 		}

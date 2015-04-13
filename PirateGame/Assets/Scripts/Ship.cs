@@ -31,12 +31,14 @@ public class Ship : MonoBehaviour {
 	public int goldInShip; //gold player is carrying on their ship
 	public int goldTotal; //gold player has overall
 	public int maxGold; //max amount of gold a ship can carry
+	public GoldScript goldGUI;
 
 	//cannons on each side of ship
 	public Cannon leftCannon;
 	public Cannon rightCannon;
 
 	public float health;
+	public HealthBarScript healthBar;
 	public State state;
 
 	//states a ship can be in at any time
@@ -61,8 +63,14 @@ public class Ship : MonoBehaviour {
 	// Use this for initialization
 	void Start () 
 	{
+		healthBar = null;
+		goldGUI = null;
 		harbor = ((GameObject)GameObject.Find(this.name.Replace("Ship","Harbor"))).transform;
-
+		if(this.name.Contains ("Player"))
+		{
+			healthBar = (HealthBarScript)((GameObject)GameObject.Find("Health_Rect")).GetComponent<HealthBarScript>();
+			goldGUI = (GoldScript)((GameObject)GameObject.Find("GoldBar")).GetComponent<GoldScript>();
+		}
 
 		maxSpeed = 1;
 		minSpeed = 0.2f;
@@ -80,16 +88,29 @@ public class Ship : MonoBehaviour {
 
 		lootingSpeed = 1.5f;
 		lootingTime = lootingSpeed;
+		if(goldGUI != null)
+			goldGUI.changeState (goldInShip);
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
+		if(goldGUI != null)
+		{
+			if(state == Ship.State.Roaming && goldGUI.state == GoldScript.State.Harbor)
+				goldGUI.changeState (goldInShip);
+			
+			if(state == Ship.State.Shopping && goldGUI.state == GoldScript.State.Ship)
+				goldGUI.changeState (goldInHarbor);
+		}
 		if (state == Ship.State.Shopping && goldInShip > 0)
 		{
 			goldInHarbor += goldInShip;
 			goldTotal += goldInShip;//this variable keeps track of total gold collected, so it is never decreased by upgrade purchases
 			goldInShip = 0;
+
+			if(goldGUI != null)
+				goldGUI.updateValue(goldInHarbor);
 		}
 
 		//respawn in harbor if health is zero
@@ -99,6 +120,8 @@ public class Ship : MonoBehaviour {
 			health = 5;
 			print("ship respawned in harbor");
 			state = Ship.State.Shopping;
+			if(healthBar  != null )
+				healthBar.resetHealth();
 
 		}
 	}
@@ -111,6 +134,8 @@ public class Ship : MonoBehaviour {
 			if(goldInShip < maxGold)
 			{
 				goldInShip += 25;
+				if(goldGUI != null)
+					goldGUI.updateValue (goldInShip);
 			}
 			lootingTime = lootingSpeed;
 		}
@@ -135,7 +160,12 @@ public class Ship : MonoBehaviour {
 				rightCannon.attackPower++;
 				break;
 			case Upgrade.Hp:
-				health += 5;//TODO: determine final value
+				health += 2;//TODO: determine final value
+				if(healthBar != null)
+				{
+					healthBar.updateMaxHealth(2f);
+					healthBar.resetHealth();
+				}
 				break;
 			case Upgrade.MaxGold:
 				maxGold += 25;
@@ -234,6 +264,8 @@ public class Ship : MonoBehaviour {
 		if (state == State.Roaming)
 		{
 			health = (health <= cannon.attackPower) ? 0 : (health - cannon.attackPower);
+			if(healthBar != null)
+				healthBar.decreaseHealth(health);
 			print ("I, " + this.transform.name + ", have been hit!!");
 		}
 	}
