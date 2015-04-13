@@ -8,14 +8,15 @@ public class GoldScript : MonoBehaviour
 	private GameObject GoldCoinShip;
 	private GameObject GoldCoinHarbor;
 	private GameObject GoldBarText;
-	// Use this for initialization
+	// Use this for initialization7
 	void Start () 
 	{
-		state = GoldScript.State.Harbor;
+		state = GoldScript.State.Ship;
 		GoldCoinShip = (GameObject)GameObject.Find("Gold Coin Ship");
 		GoldCoinShip.SetActive(false);
 		GoldCoinHarbor = (GameObject)GameObject.Find("Gold Coin Harbor");
 		GoldBarText = (GameObject)GameObject.Find("GoldBarText");
+		updateValue(0);
 	}
 	
 	// Update is called once per frame

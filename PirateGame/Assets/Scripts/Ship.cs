@@ -88,8 +88,6 @@ public class Ship : MonoBehaviour {
 
 		lootingSpeed = 1.5f;
 		lootingTime = lootingSpeed;
-		if(goldGUI != null)
-			goldGUI.changeState (goldInShip);
 	}
 	
 	// Update is called once per frame
