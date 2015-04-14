@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.EventSystems;
 
@@ -19,6 +20,13 @@ public class GUIFunctions : MonoBehaviour {
 	public int sailCount = 0;
 	public int crateCount = 0;
 	public int lootRateCount = 0;
+
+	//Code for changing the button text.
+	private GameObject CannonText;
+	private GameObject HullText;
+	private GameObject SailsText;
+	private GameObject CratesText;
+	private GameObject LootRateText;
 
 	private GameObject[] lootingCoins;
 	private int lootCoinCount = 0;
@@ -42,6 +50,13 @@ public class GUIFunctions : MonoBehaviour {
 		maxMessage.SetActive (false);
 		noLootMessage.SetActive (false);
 
+		//Code for changing the button text.
+		CannonText = (GameObject)GameObject.Find("CannonText");
+		HullText = (GameObject)GameObject.Find("HullText");
+		SailsText = (GameObject)GameObject.Find("SailsText");
+		CratesText = (GameObject)GameObject.Find("CratesText");
+		LootRateText = (GameObject)GameObject.Find("LootRateText");
+
 		open = false;
 		menuText = "";
 	}
@@ -59,6 +74,14 @@ public class GUIFunctions : MonoBehaviour {
 			lootingGUI.SetActive(true);
 			open = true;
 		}
+
+		//Code for changing the button text.
+		CannonText.GetComponent<Text>().text = "Cannons: +"+cannonCount;
+		HullText.GetComponent<Text>().text = "Hull: +"+hullCount;
+		SailsText.GetComponent<Text>().text = "Sails: +"+sailCount;
+		CratesText.GetComponent<Text>().text = "Crates: +"+crateCount;
+		LootRateText.GetComponent<Text>().text = "Loot Rate: +"+lootRateCount;
+
 	}
 
 	public void DisplayText(int opt)
@@ -116,7 +139,7 @@ public class GUIFunctions : MonoBehaviour {
 		//not enough loot to upgrade it, hide the shop GUI
 		//and show the appropriate message.
 		//TODO: figure out cannon attackpower stuff
-		if (ship.leftCannon.attackPower == 5) {
+		if (ship.leftCannon.attackPower == 3) {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 
@@ -167,7 +190,7 @@ public class GUIFunctions : MonoBehaviour {
 		//not enough loot to upgrade it, hide the shop GUI
 		//and show the appropriate message.
 		//TODO: change speed value to compare to
-		if (ship.maxSpeed == 5) {
+		if (ship.maxSpeed == 3) {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 
@@ -191,7 +214,7 @@ public class GUIFunctions : MonoBehaviour {
 		//If the crates are already maxed out or there's
 		//not enough loot to upgrade it, hide the shop GUI
 		//and show the appropriate message.
-		if (ship.maxGold == 600) {
+		if (ship.maxGold == 150) {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
 		} 
@@ -272,6 +295,7 @@ public class GUIFunctions : MonoBehaviour {
 
 	void OnGUI()
 	{
-		GUI.Label (new Rect (300,0,190,800), menuText);
+		GUI.color = Color.black;
+		GUI.Label (new Rect (300, 0, 190, 800), menuText);
 	}
 }
