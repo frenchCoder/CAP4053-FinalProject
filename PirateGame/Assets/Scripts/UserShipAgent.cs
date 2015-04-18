@@ -32,6 +32,8 @@ public class UserShipAgent : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+		boundaryCheck ();
+
 		//move/attack according to user if roaming
 		if (ship.state == Ship.State.Roaming)
 		{
@@ -128,7 +130,6 @@ public class UserShipAgent : MonoBehaviour {
 
 	void OnTriggerEnter(Collider hit)
 	{
-		//print("hit a trigger: " + hit.name);
 		curhit = hit;
 
 		//if player hit the island
@@ -158,4 +159,36 @@ public class UserShipAgent : MonoBehaviour {
 			ship.state = Ship.State.Roaming;		
 		}
 	}	
+
+	void boundaryCheck()
+	{
+		Vector3 left = new Vector3 (-20, 0, 0);
+		Vector3 right = new Vector3 (20, 0, 0);
+		Vector3 up = new Vector3 (0, 0, 14);
+		Vector3 down = new Vector3 (0, 0, -14);
+		
+
+		//ocean is 20x by 14z
+		//leaving left border
+		if (transform.position.x <= -10) 
+		{
+			transform.position += right;//* ship.curSpeed * Time.deltaTime;
+		}
+		//leaving right border
+		else if (transform.position.x >= 10)
+		{
+			transform.position += left;
+		}
+
+		//leaving down border
+		if (transform.position.z <= -7) 
+		{
+			transform.position += up;
+		}
+		//leaving up border
+		else if (transform.position.z >= 7) 
+		{
+			transform.position += down;
+		} 
+	}
 }
