@@ -22,11 +22,11 @@ public class GUIFunctions : MonoBehaviour {
 	public int lootRateCount = 0;
 
 	//Code for changing the button text.
-	private GameObject CannonText;
-	private GameObject HullText;
-	private GameObject SailsText;
-	private GameObject CratesText;
-	private GameObject LootRateText;
+	public GameObject CannonText;
+	public GameObject HullText;
+	public GameObject SailsText;
+	public GameObject CratesText;
+	public GameObject LootRateText;
 
 	private GameObject[] lootingCoins;
 	private int lootCoinCount = 0;
@@ -43,19 +43,19 @@ public class GUIFunctions : MonoBehaviour {
 		lootText = (GameObject)GameObject.Instantiate(Resources.Load("GUI/LootText"));
 		harborText = (GameObject)GameObject.Instantiate(Resources.Load("GUI/HarborText"));
 
+		//Code for changing the button text.
+		//CannonText = (GameObject)GameObject.Find("ShopGUI/CannonButton/CannonText");
+		//HullText = (GameObject)GameObject.Find("HullText");
+		//SailsText = (GameObject)GameObject.Find("SailsText");
+		//CratesText = (GameObject)GameObject.Find("CratesText");
+		//LootRateText = (GameObject)GameObject.Find("LootRateText");
+
 		lootText.SetActive(false);
 		harborText.SetActive (false);
 		lootingGUI.SetActive (false);
 		shoppingGUI.SetActive (false);
 		maxMessage.SetActive (false);
 		noLootMessage.SetActive (false);
-
-		//Code for changing the button text.
-		CannonText = (GameObject)GameObject.Find("CannonText");
-		HullText = (GameObject)GameObject.Find("HullText");
-		SailsText = (GameObject)GameObject.Find("SailsText");
-		CratesText = (GameObject)GameObject.Find("CratesText");
-		LootRateText = (GameObject)GameObject.Find("LootRateText");
 
 		open = false;
 		menuText = "";
@@ -75,12 +75,16 @@ public class GUIFunctions : MonoBehaviour {
 			open = true;
 		}
 
-		//Code for changing the button text.
-		CannonText.GetComponent<Text>().text = "Cannons: +"+cannonCount;
-		HullText.GetComponent<Text>().text = "Hull: +"+hullCount;
-		SailsText.GetComponent<Text>().text = "Sails: +"+sailCount;
-		CratesText.GetComponent<Text>().text = "Crates: +"+crateCount;
-		LootRateText.GetComponent<Text>().text = "Loot Rate: +"+lootRateCount;
+		if (ship.state == Ship.State.Shopping && open)
+		{
+			//Code for changing the button text.
+			CannonText.GetComponent<Text>().text = "Cannons: +"+cannonCount;
+			HullText.GetComponent<Text>().text = "Hull: +"+hullCount;
+			SailsText.GetComponent<Text>().text = "Sails: +"+sailCount;
+			CratesText.GetComponent<Text>().text = "Crates: +"+crateCount;
+			LootRateText.GetComponent<Text>().text = "Loot Rate: +"+lootRateCount;
+		}
+
 
 	}
 
