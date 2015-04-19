@@ -331,7 +331,6 @@ public class Ship : MonoBehaviour {
 
 			if(healthBar != null)
 				healthBar.decreaseHealth(health);
-			print ("I, " + this.transform.name + ", have been hit!!");
 
 		}
 	}
