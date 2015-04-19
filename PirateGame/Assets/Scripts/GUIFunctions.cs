@@ -42,7 +42,7 @@ public class GUIFunctions : MonoBehaviour {
 		ship = GameObject.FindGameObjectWithTag("Player").GetComponent<Ship>();
 		lootText = (GameObject)GameObject.Instantiate(Resources.Load("GUI/LootText"));
 		harborText = (GameObject)GameObject.Instantiate(Resources.Load("GUI/HarborText"));
-
+		print("start in gui funct");
 		//Code for changing the button text.
 		//CannonText = (GameObject)GameObject.Find("ShopGUI/CannonButton/CannonText");
 		//HullText = (GameObject)GameObject.Find("HullText");
