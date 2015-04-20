@@ -20,16 +20,10 @@ public class UserShipAgent : MonoBehaviour {
 	{
 		coins = 8f;
 		count = 0f;
-		//TODO: init variables
-		/*
-			spawn user in their harbor
-			give user enough gold to purchase only 1 upgrade
-			done in update: open shop menu for user to purchase item, game timer starts when menu is exited
-		 */
 		
 		ship = GetComponent<Ship>();
 		gui = ((GameObject)GameObject.Find("GUI_Manager")).GetComponent<GUIFunctions>();
-		ship.state = Ship.State.Roaming;
+		ship.state = Ship.State.Shopping;
 		island = GameObject.Find ("LootIsland").transform;
 
 		showingStatsBar = false;
@@ -189,8 +183,8 @@ public class UserShipAgent : MonoBehaviour {
 	{
 		Vector3 left = new Vector3 (-20, 0, 0);
 		Vector3 right = new Vector3 (20, 0, 0);
-		Vector3 up = new Vector3 (0, 0, 14);
-		Vector3 down = new Vector3 (0, 0, -14);
+		Vector3 up = new Vector3 (0, 0, 15);
+		Vector3 down = new Vector3 (0, 0, -15);
 		
 
 		//ocean is 20x by 14z
@@ -206,12 +200,12 @@ public class UserShipAgent : MonoBehaviour {
 		}
 
 		//leaving down border
-		if (transform.position.z <= -7) 
+		if (transform.position.z <= -7.5f) 
 		{
 			transform.position += up;
 		}
 		//leaving up border
-		else if (transform.position.z >= 7) 
+		else if (transform.position.z >= 7.5) 
 		{
 			transform.position += down;
 		} 
