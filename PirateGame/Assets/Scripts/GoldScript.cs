@@ -12,9 +12,9 @@ public class GoldScript : MonoBehaviour
 	void Start () 
 	{
 		state = GoldScript.State.Harbor;
-		GoldCoinShip = (GameObject)GameObject.Find("Gold Coin Ship");
+		GoldCoinShip = (GameObject)GameObject.Find("ShipCoin");
 		GoldCoinShip.SetActive(false);
-		GoldCoinHarbor = (GameObject)GameObject.Find("Gold Coin Harbor");
+		GoldCoinHarbor = (GameObject)GameObject.Find("HarborCoin");
 		GoldBarText = (GameObject)GameObject.Find("GoldBarText");
 		updateValue(0);
 	}
@@ -34,15 +34,15 @@ public class GoldScript : MonoBehaviour
 	{
 		if(state == State.Harbor)
 		{
+			GoldCoinHarbor.GetComponent<CanvasRenderer>().gameObject.SetActive(false);
+			GoldCoinShip.GetComponent<CanvasRenderer>().gameObject.SetActive(true);
 			state = State.Ship;
-			GoldCoinHarbor.SetActive(false);
-			GoldCoinShip.SetActive(true);
 		}
 		else
 		{
+			GoldCoinHarbor.GetComponent<CanvasRenderer>().gameObject.SetActive(true);
+			GoldCoinShip.GetComponent<CanvasRenderer>().gameObject.SetActive(false);
 			state = State.Harbor;
-			GoldCoinHarbor.SetActive(true);
-			GoldCoinShip.SetActive(false);
 		}
 		updateValue (value);
 	}
