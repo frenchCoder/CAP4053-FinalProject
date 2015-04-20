@@ -26,13 +26,13 @@ public class UserShipAgent : MonoBehaviour {
 		ship.state = Ship.State.Shopping;
 		island = GameObject.Find ("LootIsland").transform;
 
-		/*
+
 		showingStatsBar = false;
 		stats = ((GameObject)GameObject.Find ("StatisticsBar"));
 		stats.SetActive (true);
 		statsScript = ((GameObject)GameObject.Find ("StatisticsBar")).GetComponent<StatsBarScript>();
 		stats.SetActive(false);
-		*/
+
 	}
 	
 	// Update is called once per frame
@@ -40,12 +40,12 @@ public class UserShipAgent : MonoBehaviour {
 	{
 		boundaryCheck ();
 
-		/*
+
 		if(stats.activeInHierarchy)
 		{
 			statsScript.RetrieveValues();
 		}
-		*/
+
 
 		//move/attack according to user if roaming
 		if (ship.state == Ship.State.Roaming)
@@ -139,7 +139,7 @@ public class UserShipAgent : MonoBehaviour {
 			transform.position += transform.up * (ship.minSpeed) * Time.deltaTime;
 
 		}
-		/*
+
 		if(Input.GetKey (KeyCode.Tab) && !showingStatsBar)
 		{
 			showingStatsBar = true;
@@ -150,7 +150,7 @@ public class UserShipAgent : MonoBehaviour {
 			showingStatsBar = false;
 			stats.SetActive (false);
 		}
-		*/
+
 	}
 
 	void OnTriggerEnter(Collider hit)
