@@ -46,6 +46,7 @@ public class Ship : MonoBehaviour {
 	public int health;
 	public int maxHealth;
 	public State state;
+	public ShipColor color;
 
 	//control shooting rate for cannons
 	public float shootingRate;
@@ -70,7 +71,14 @@ public class Ship : MonoBehaviour {
 		Hp,
 		LootingSpeed
 	};
-
+	
+	public enum ShipColor
+	{
+		Red, 
+		White, 
+		Yellow, 
+		Purple
+	};
 
 	// Use this for initialization
 	void Start () 
@@ -78,7 +86,7 @@ public class Ship : MonoBehaviour {
 		healthBar = null;
 		goldGUI = null;
 		harbor = ((GameObject)GameObject.Find(this.name.Replace("Ship","Harbor"))).transform;
-
+		color = GetColorFromShipname();
 		if(this.name.Contains ("Player"))
 		{
 			healthBar = (HealthBarScript)((GameObject)GameObject.Find("HealthBar")).GetComponent<HealthBarScript>();
@@ -333,7 +341,6 @@ public class Ship : MonoBehaviour {
 		if (state == State.Roaming)
 		{
 			health = (health <= cannon.attackPower) ? 0 : (health - cannon.attackPower);
-
 			if(healthBar != null)
 				healthBar.decreaseHealth(health);
 
@@ -388,5 +395,17 @@ public class Ship : MonoBehaviour {
 		//back to normal in harbor
 		state = State.Roaming;
 	}
-
+	private ShipColor GetColorFromShipname()
+	{
+		string shipname = this.name;
+		if(shipname.Contains ("Player"))
+			return ShipColor.White;
+		if(shipname.Contains ("Purple"))
+			return ShipColor.Purple;
+		if(shipname.Contains ("Yellow"))
+			return ShipColor.Yellow;
+		if(shipname.Contains ("Red"))
+			return ShipColor.Red;
+		return ShipColor.White;
+	}
 }

@@ -11,6 +11,10 @@ public class UserShipAgent : MonoBehaviour {
 	private float coins;
 	private float count;
 
+	private bool showingStatsBar;	
+	public StatsBarScript statsScript;
+	public GameObject stats;
+
 	// Use this for initialization
 	void Start () 
 	{
@@ -21,12 +25,23 @@ public class UserShipAgent : MonoBehaviour {
 		gui = ((GameObject)GameObject.Find("GUI_Manager")).GetComponent<GUIFunctions>();
 		ship.state = Ship.State.Shopping;
 		island = GameObject.Find ("LootIsland").transform;
+
+		showingStatsBar = false;
+		stats = ((GameObject)GameObject.Find ("StatisticsBar"));
+		stats.SetActive (true);
+		statsScript = ((GameObject)GameObject.Find ("StatisticsBar")).GetComponent<StatsBarScript>();
+		stats.SetActive(false);
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
 		boundaryCheck ();
+
+		if(stats.activeInHierarchy)
+		{
+			statsScript.RetrieveValues();
+		}
 
 		//move/attack according to user if roaming
 		if (ship.state == Ship.State.Roaming)
@@ -119,6 +134,16 @@ public class UserShipAgent : MonoBehaviour {
 			//move forward at min speed
 			transform.position += transform.up * (ship.minSpeed) * Time.deltaTime;
 
+		}
+		if(Input.GetKey (KeyCode.Tab) && !showingStatsBar)
+		{
+			showingStatsBar = true;
+			stats.SetActive (true);
+		}
+		if(Input.GetKeyUp (KeyCode.Tab) && showingStatsBar)
+		{
+			showingStatsBar = false;
+			stats.SetActive (false);
 		}
 	}
 
