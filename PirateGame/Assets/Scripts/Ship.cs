@@ -81,7 +81,7 @@ public class Ship : MonoBehaviour {
 
 		if(this.name.Contains ("Player"))
 		{
-			healthBar = (HealthBarScript)((GameObject)GameObject.Find("Health_Rect")).GetComponent<HealthBarScript>();
+			healthBar = (HealthBarScript)((GameObject)GameObject.Find("HealthBar")).GetComponent<HealthBarScript>();
 			goldGUI = (GoldScript)((GameObject)GameObject.Find("GoldBar")).GetComponent<GoldScript>();
 		}
 		cannonsprite = GameObject.Find("cannon").transform;
@@ -182,7 +182,7 @@ public class Ship : MonoBehaviour {
 				//TODO: fix this, altho getting rid of this if statement fixed everything
 				if(healthBar != null)
 				{
-					healthBar.updateMaxHealth(2f);
+					healthBar.updateMaxHealth();
 					healthBar.resetHealth();
 				}
 				maxHealth++;

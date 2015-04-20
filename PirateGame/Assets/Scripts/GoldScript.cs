@@ -11,7 +11,7 @@ public class GoldScript : MonoBehaviour
 	// Use this for initialization7
 	void Start () 
 	{
-		state = GoldScript.State.Ship;
+		state = GoldScript.State.Harbor;
 		GoldCoinShip = (GameObject)GameObject.Find("Gold Coin Ship");
 		GoldCoinShip.SetActive(false);
 		GoldCoinHarbor = (GameObject)GameObject.Find("Gold Coin Harbor");
