@@ -8,58 +8,26 @@ public class gameTimer : MonoBehaviour {
 	private float totalGameTime, startTime;
 	public Text timerText;
 	private bool gameOver;
-	private bool gameStarted;
-
-	private Text scoreText;
-
-	public Ship redShip;
-	public Ship purpleShip;
-	public Ship yellowShip;
-	public Ship playerShip;
 
 	// Use this for initialization
 	void Start () 
 	{
-		totalGameTime = timer = 120.0f;
+		totalGameTime = timer = 15.0f;
+		startTime = Time.realtimeSinceStartup;
 		gameOver = false;
-		gameStarted = false;
 
-		//init score text and make invisible
-		scoreText = GameObject.Find ("ScoreText").GetComponent<Text> ();
-		scoreText.text = "";
-		scoreText.enabled = false;
-
-		//get ships
-		redShip = GameObject.Find ("RedShip").GetComponent<Ship> ();
-		purpleShip = GameObject.Find ("PurpleShip").GetComponent<Ship> ();
-		yellowShip = GameObject.Find ("YellowShip").GetComponent<Ship> ();
-		playerShip = GameObject.Find ("PlayerShip").GetComponent<Ship> ();
-
-
-		Vector3 temp = playerShip.transform.rotation.eulerAngles;
-		temp.y += 180.0f;
-		playerShip.transform.rotation = Quaternion.Euler(temp);
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-		if (!gameOver && gameStarted)
+		if (!gameOver)
 		{
 			runTimer();
 		}
-		else if(!gameStarted)
-		{
-			//game timer starts when player has exited shop first time
-			if (playerShip.state == Ship.State.Roaming)
-			{
-				gameStarted = true;				
-				startTime = Time.realtimeSinceStartup;
-			}
-			//TODO: stop AI ships from moving before timer starts
-		}
 		else 
 		{
+			//TODO:get all player points
 			endGame ();
 		}
 	}
@@ -89,29 +57,7 @@ public class gameTimer : MonoBehaviour {
 
 	public void endGame ()
 	{
-		string points = "\nPlayer Ship: " + playerShip.goldTotal + "\nRed Ship: " + redShip.goldTotal
-			+ "\nPurple Ship: " + purpleShip.goldTotal + "\nYellow Ship: " + yellowShip.goldTotal;
-
-		if (playerShip.goldTotal == maxGold(playerShip, redShip, purpleShip, yellowShip))
-		{
-			scoreText.text = "You Won!\n";
-		}
-		else
-		{
-			scoreText.text = "You Lost!\n";
-		}
-
-		scoreText.text += points;
-
-		DontDestroyOnLoad(scoreText.transform.parent);
-
+		Debug.Log ("end game");
 		Application.LoadLevel("endscene");
 	}
-
-	//return ship with max gold
-	private int maxGold(Ship a, Ship b, Ship c, Ship d)
-	{
-		return Mathf.Max (a.goldTotal, Mathf.Max (b.goldTotal, Mathf.Max (c.goldTotal, d.goldTotal)));
-	}
-
 }
