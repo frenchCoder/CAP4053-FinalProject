@@ -85,9 +85,9 @@ public class GUIFunctions : MonoBehaviour {
 		{
 			//Code for changing the button text.
 			CannonText.GetComponent<Text>().text = "Cannons: +"+cannonCount;
-			HullText.GetComponent<Text>().text = "Hull: +"+hullCount;
+			HullText.GetComponent<Text>().text = "Health: +"+hullCount;
 			SailsText.GetComponent<Text>().text = "Sails: +"+sailCount;
-			CratesText.GetComponent<Text>().text = "Crates: +"+crateCount;
+			CratesText.GetComponent<Text>().text = "Max Gold: +"+crateCount;
 			LootRateText.GetComponent<Text>().text = "Loot Rate: +"+lootRateCount;
 		}
 	}
