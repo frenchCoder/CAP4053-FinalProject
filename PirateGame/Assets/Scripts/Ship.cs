@@ -179,6 +179,7 @@ public class Ship : MonoBehaviour {
 				rightCannon.attackPower++;
 				break;
 			case Upgrade.Hp:
+				//TODO: fix this, altho getting rid of this if statement fixed everything
 				if(healthBar != null)
 				{
 					healthBar.updateMaxHealth(2f);
@@ -191,7 +192,7 @@ public class Ship : MonoBehaviour {
 				maxGold += 25;
 				break;
 			case Upgrade.LootingSpeed:
-				lootingSpeed-=0.5f;
+				lootingSpeed -= 0.5f;
 				break;
 			default:
 				print ("no upgrades given");

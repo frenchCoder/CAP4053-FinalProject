@@ -5,15 +5,13 @@ using UnityEngine.UI;
 public class EndSceneScript : MonoBehaviour {
 
 	public GameObject scores;
-	public Text scoreText;
+	public GameObject scoreCanvas;
 
 	void Start()
 	{
-		scores = (GameObject)GameObject.Find ("Scores");
-		scoreText = scores.GetComponent<Text> ();
-
-		scoreText.text = "You Won!\n\nGold coins collected:\nYou: 500 \nRed: 300\nPurple: 200\nYellow: 100";
-		//TODO: set the text to game results
+		//make score text visible
+		scores = (GameObject)GameObject.Find ("ScoreText");
+		scores.GetComponent<Text> ().enabled = true;
 	}
 
 	void Update ()
@@ -22,7 +20,7 @@ public class EndSceneScript : MonoBehaviour {
 	}
 
 	public void startOver() {
-		Debug.Log ("start game");
+		scores.GetComponent<Text> ().enabled = false;
 		Application.LoadLevel("startscene");
 	}
 
