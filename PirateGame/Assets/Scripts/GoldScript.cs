@@ -36,12 +36,19 @@ public class GoldScript : MonoBehaviour
 		{
 			GoldCoinHarbor.GetComponent<CanvasRenderer>().gameObject.SetActive(false);
 			GoldCoinShip.GetComponent<CanvasRenderer>().gameObject.SetActive(true);
+			//GoldCoinHarbor.GetComponent<Image>().enabled = false;
+			//GoldCoinShip.GetComponent<Image>().enabled = true;
+
+
 			state = State.Ship;
 		}
 		else
 		{
 			GoldCoinHarbor.GetComponent<CanvasRenderer>().gameObject.SetActive(true);
 			GoldCoinShip.GetComponent<CanvasRenderer>().gameObject.SetActive(false);
+
+			//GoldCoinHarbor.GetComponent<Image>().enabled = true;
+			//GoldCoinShip.GetComponent<Image>().enabled = false;
 			state = State.Harbor;
 		}
 		updateValue (value);
