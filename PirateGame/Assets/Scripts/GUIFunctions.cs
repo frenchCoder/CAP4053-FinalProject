@@ -22,18 +22,18 @@ public class GUIFunctions : MonoBehaviour {
 	public int lootRateCount = 0;
 
 	//Code for changing the button text.
-	public GameObject CannonText;
-	public GameObject HullText;
-	public GameObject SailsText;
-	public GameObject CratesText;
-	public GameObject LootRateText;
+	private GameObject CannonText;
+	private GameObject HullText;
+	private GameObject SailsText;
+	private GameObject CratesText;
+	private GameObject LootRateText;
 
 	private GameObject[] lootingCoins;
 	private int lootCoinCount = 0;
 	private GameObject eventSystem; //Used to make currently selected item no longer selected - needed for "space" to work on shoppingGUI
 	private string menuText;
 
-	bool open;
+	bool open;//true if main shopping menu is up
 
 	// Use this for initialization
 	void Start () {
@@ -44,11 +44,11 @@ public class GUIFunctions : MonoBehaviour {
 		harborText = (GameObject)GameObject.Instantiate(Resources.Load("GUI/HarborText"));
 		print("start in gui funct");
 		//Code for changing the button text.
-		//CannonText = (GameObject)GameObject.Find("ShopGUI/CannonButton/CannonText");
-		//HullText = (GameObject)GameObject.Find("HullText");
-		//SailsText = (GameObject)GameObject.Find("SailsText");
-		//CratesText = (GameObject)GameObject.Find("CratesText");
-		//LootRateText = (GameObject)GameObject.Find("LootRateText");
+		CannonText = (GameObject)GameObject.Find("ShopGUI/CannonButton/CannonText");
+		HullText = (GameObject)GameObject.Find("HullText");
+		SailsText = (GameObject)GameObject.Find("SailsText");
+		CratesText = (GameObject)GameObject.Find("CratesText");
+		LootRateText = (GameObject)GameObject.Find("LootRateText");
 
 		lootText.SetActive(false);
 		harborText.SetActive (false);
@@ -68,6 +68,13 @@ public class GUIFunctions : MonoBehaviour {
 		{
 			shoppingGUI.SetActive(true);
 			open = true;
+
+			//reinit button text b/c they became null when shoppingGUI.setActive(false)
+			CannonText = (GameObject)GameObject.Find("ShopGUI/CannonButton/CannonText");
+			HullText = (GameObject)GameObject.Find("HullText");
+			SailsText = (GameObject)GameObject.Find("SailsText");
+			CratesText = (GameObject)GameObject.Find("CratesText");
+			LootRateText = (GameObject)GameObject.Find("LootRateText");
 		}
 		if(ship.state == Ship.State.Looting && !open)
 		{
@@ -75,7 +82,8 @@ public class GUIFunctions : MonoBehaviour {
 			open = true;
 		}
 
-		if (ship.state == Ship.State.Shopping && open)
+		//change button text
+		if (ship.state == Ship.State.Shopping && open && shoppingGUI.activeInHierarchy)
 		{
 			//Code for changing the button text.
 			CannonText.GetComponent<Text>().text = "Cannons: +"+cannonCount;
@@ -85,7 +93,10 @@ public class GUIFunctions : MonoBehaviour {
 			LootRateText.GetComponent<Text>().text = "Loot Rate: +"+lootRateCount;
 		}
 
-
+		if(ship.state != Ship.State.Shopping)
+		{
+			menuText = "";
+		}
 	}
 
 	public void DisplayText(int opt)
