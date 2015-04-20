@@ -150,7 +150,6 @@ public class Ship : MonoBehaviour {
 
 			state = Ship.State.Dying;
 			StartCoroutine(respawnInHarbor());
-
 		}
 	}
 
@@ -232,7 +231,6 @@ public class Ship : MonoBehaviour {
 			{
 				//get enemy ship component and implement damage
 				enemyShip = (Ship) hit.transform.GetComponent(typeof(Ship));
-
 				
 				enemyShip.takeDamage(rightCannon);
 				
@@ -260,9 +258,12 @@ public class Ship : MonoBehaviour {
 					goldInShip += enemyShip.goldInShip;
 					goldInShip = Mathf.Clamp(goldInShip, 0, maxGold);
 					print ("collect gold from ship: " + enemyShip.goldInShip );
-					
-				}
-				
+
+					if(goldGUI != null)
+					{
+						goldGUI.updateValue(goldInShip);
+					}					
+				}				
 			}
 			else 
 			{
@@ -317,6 +318,11 @@ public class Ship : MonoBehaviour {
 					goldInShip += enemyShip.goldInShip;
 					goldInShip = Mathf.Clamp(goldInShip, 0, maxGold);
 					print ("collect gold from ship: " + enemyShip.goldInShip );
+
+					if(goldGUI != null)
+					{
+						goldGUI.updateValue(goldInShip);
+					}
 				}
 			}
 			else 
@@ -330,7 +336,7 @@ public class Ship : MonoBehaviour {
 				
 				cannonController cannonscript = clone.GetComponent<cannonController>();
 				cannonscript.init(transform, endPoint, false);
-			}	
+			}
 		}
 	}
 	
