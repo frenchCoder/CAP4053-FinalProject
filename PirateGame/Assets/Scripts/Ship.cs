@@ -217,6 +217,8 @@ public class Ship : MonoBehaviour {
 		RaycastHit hit;
 		int sensorRange = 1;
 		
+		Ship enemyShip;
+		
 		//right side
 		if (side.Equals("R") && canShootRight)
 		{
@@ -229,9 +231,9 @@ public class Ship : MonoBehaviour {
 			if (Physics.Raycast (transform.position, rightdir, out hit, sensorRange + buffer) && (hit.transform.tag.Equals("Enemy") || hit.transform.tag.Equals("Player")))
 			{
 				//get enemy ship component and implement damage
-				Ship enemyShip = (Ship) hit.transform.GetComponent(typeof(Ship));
+				enemyShip = (Ship) hit.transform.GetComponent(typeof(Ship));
 
-				int gold = enemyShip.goldInShip;
+				
 				enemyShip.takeDamage(rightCannon);
 				
 				//Debug.DrawRay(transform.position, rightdir * hit.distance, Color.red, 10);
@@ -255,9 +257,10 @@ public class Ship : MonoBehaviour {
 				//take gold if ship has been destroyed
 				if (enemyShip.health == 0)
 				{
-					int newamount = (goldInShip + gold) % (maxGold);
-					print ("collect gold from ship: " + newamount );
-					goldInShip = newamount;
+					goldInShip += enemyShip.goldInShip;
+					goldInShip = Mathf.Clamp(goldInShip, 0, maxGold);
+					print ("collect gold from ship: " + enemyShip.goldInShip );
+					
 				}
 				
 			}
@@ -278,15 +281,16 @@ public class Ship : MonoBehaviour {
 		else if (side.Equals("L") && canShootLeft)
 		{
 			StartCoroutine(loadLeftCannons());
-
+			
 			//get nearest ship in shooting range for each cannon
 			Vector3 leftdir = -transform.right;
-			leftdir.Normalize ();
-
+			leftdir.Normalize ();		
+			
+		
 			if (Physics.Raycast (transform.position, leftdir, out hit, sensorRange + buffer) && hit.transform.tag.Equals("Enemy"))
 			{
 				//get enemy ship component and implement damage
-				Ship enemyShip = (Ship) hit.transform.GetComponent(typeof(Ship));
+				enemyShip = (Ship) hit.transform.GetComponent(typeof(Ship));
 				enemyShip.takeDamage(leftCannon);
 				
 				//Debug.DrawRay(transform.position, leftdir * hit.distance, Color.red, 10);
@@ -310,9 +314,9 @@ public class Ship : MonoBehaviour {
 				//take gold if ship has been destroyed
 				if (enemyShip.health == 0)
 				{
-					int newamount = (goldInShip + enemyShip.goldInShip) % maxGold;
-					print ("collect gold from ship: " + newamount );
-					goldInShip = (goldInShip + enemyShip.goldInShip) % maxGold;
+					goldInShip += enemyShip.goldInShip;
+					goldInShip = Mathf.Clamp(goldInShip, 0, maxGold);
+					print ("collect gold from ship: " + enemyShip.goldInShip );
 				}
 			}
 			else 
@@ -361,7 +365,9 @@ public class Ship : MonoBehaviour {
 	IEnumerator respawnInHarbor()
 	{
 		Renderer renderer = GetComponent<Renderer>();
-
+		
+		goldInShip = 0;
+		
 		//flash ship for 2 seconds in current location
 		for(int i = 0; i < 5; i++)
 		{

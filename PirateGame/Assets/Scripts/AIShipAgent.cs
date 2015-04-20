@@ -44,7 +44,7 @@ public class AIShipAgent : MonoBehaviour {
 			}
 		}
 		
-		Time.timeScale = 2;
+		
 	}
 	
 	// Update is called once per frame
@@ -97,6 +97,11 @@ public class AIShipAgent : MonoBehaviour {
 							target = closestShip.position - (-Vector3.Normalize(transform.position + closestShip.position));
 							if (debug) print("othership");
 						}
+						
+						else
+						{
+							target = lootIsland.position;
+						}
 					}
 				}
 				
@@ -135,20 +140,27 @@ public class AIShipAgent : MonoBehaviour {
 		else if (ship.state == Ship.State.Shopping)
 		{
 			//TODO: Upgrade code goes here
-			ship.state = Ship.State.Roaming;
-			target = lootIsland.position;
+			//ship.state = Ship.State.Roaming;
+			//target = lootIsland.position;
 			
 		}
 		
 		//don't let ship move when it is dying and respawning
 		else if (ship.state == Ship.State.Dying)
 		{
-			nav.destination = transform.position;
+			nav.speed = 0;
+			StartCoroutine(ResetTarget());
 		}
 		
 		
 	}
-
+	
+	IEnumerator ResetTarget()
+	{
+		yield return new WaitForSeconds(2);
+		nav.speed = 0.5f;
+	}
+	
 	void OnTriggerEnter(Collider hit)
 	{		
 		if(hit.transform == lootIsland)
@@ -161,12 +173,31 @@ public class AIShipAgent : MonoBehaviour {
 		{
 			if(ship.goldInShip > 0)
 			{
-				if (debug) print("shopping");
-				ship.state = Ship.State.Shopping;
+				ship.goldInHarbor += ship.goldInShip;
+				ship.goldTotal += ship.goldInShip;//this variable keeps track of total gold collected, so it is never decreased by upgrade purchases
+				ship.goldInShip = 0;
+				ship.state = Ship.State.Roaming;
+				target = lootIsland.position;
+				//ship.state = Ship.State.Shopping;
 			}
 		}
 
 	}
+	
+	/*void OnTriggerStay(Collider hit)
+	{
+		if(hit.transform == ship.harbor)
+		{
+			if(ship.goldInShip > 0)
+			{
+				if(ship.state == Ship.State.Roaming)
+				{
+					print(transform.name + " " + ship.goldInShip);
+					StartCoroutine(Deposit());
+				}
+			}
+		}
+	}*/
 	
 	void GetClosestShip()
 	{
@@ -185,6 +216,16 @@ public class AIShipAgent : MonoBehaviour {
 		closestShip = enemyShips[i];
 		shipDist = d;	
 		
+	}
+	
+	IEnumerator Deposit()
+	{
+		
+		
+		yield return new WaitForEndOfFrame();
+		print(transform.name + " " + ship.goldInShip);
+		ship.state = Ship.State.Roaming;
+		target = lootIsland.position;
 	}
 
 
