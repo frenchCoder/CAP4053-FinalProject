@@ -19,7 +19,6 @@ public class AIShipAgent : MonoBehaviour {
 	float shipDist;
 	
 	NavMeshAgent nav;
-
 	
 	public bool debug;
 	
@@ -54,7 +53,7 @@ public class AIShipAgent : MonoBehaviour {
 		GetClosestShip();
 		
 		//if roaming
-		if (ship.state == Ship.State.Roaming) 
+		if (ship.state == Ship.State.Roaming && ship.gameStarted) 
 		{
 			RaycastHit hit;
 			if(Physics.Raycast(transform.position, transform.right, out hit, 1))

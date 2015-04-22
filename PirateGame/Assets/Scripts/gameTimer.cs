@@ -54,10 +54,13 @@ public class gameTimer : MonoBehaviour {
 			//game timer starts when player has exited shop first time
 			if (playerShip.state == Ship.State.Roaming)
 			{
-				gameStarted = true;				
+				gameStarted = true;
+				redShip.gameStarted = true;
+				purpleShip.gameStarted = true;
+				yellowShip.gameStarted = true;
+				playerShip.gameStarted = true;
 				startTime = Time.realtimeSinceStartup;
 			}
-			//TODO: stop AI ships from moving before timer starts
 		}
 		else 
 		{
