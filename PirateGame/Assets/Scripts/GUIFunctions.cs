@@ -77,6 +77,7 @@ public class GUIFunctions : MonoBehaviour {
 		if(ship.state == Ship.State.Looting && !open)
 		{
 			lootingGUI.SetActive(true);
+			ResetCoins ();
 			open = true;
 		}
 
@@ -114,9 +115,7 @@ public class GUIFunctions : MonoBehaviour {
 		GameObject[] temp = new GameObject[numCoins];
 		for(int i=0; i<temp.Length; i++)
 		{
-			GameObject next = (GameObject)Instantiate(Resources.Load("Coin"));
-			next.transform.position += new Vector3(0.5f * i, 0f, 0f);
-			next.SetActive (false);
+			GameObject next = GameObject.Find("Coin"+i);
 			temp[i] = next;
 		}
 		return temp;
