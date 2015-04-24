@@ -187,33 +187,14 @@ public class UserShipAgent : MonoBehaviour {
 
 	void boundaryCheck()
 	{
-		Vector3 left = new Vector3 (-20, 0, 0);
-		Vector3 right = new Vector3 (20, 0, 0);
-		Vector3 up = new Vector3 (0, 0, 15);
-		Vector3 down = new Vector3 (0, 0, -15);
-		
+		Vector3 temp = transform.rotation.eulerAngles;
+		temp.y += 180.0f;
 
 		//ocean is 20x by 14z
 		//leaving left border
-		if (transform.position.x <= -10) 
-		{
-			transform.position += right;//* ship.curSpeed * Time.deltaTime;
+		if (transform.position.x <= -9.5 || transform.position.x >= 9.5 || transform.position.z <= -7f || transform.position.z >= 7) 
+		{			
+			transform.rotation = Quaternion.Euler(temp);
 		}
-		//leaving right border
-		else if (transform.position.x >= 10)
-		{
-			transform.position += left;
-		}
-
-		//leaving down border
-		if (transform.position.z <= -7.5f) 
-		{
-			transform.position += up;
-		}
-		//leaving up border
-		else if (transform.position.z >= 7.5) 
-		{
-			transform.position += down;
-		} 
 	}
 }
