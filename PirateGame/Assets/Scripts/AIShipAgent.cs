@@ -6,7 +6,7 @@ public class AIShipAgent : MonoBehaviour {
 	Ship ship;
 
 	//determines ship strategical behavior
-	public int aggressionLevel;
+	private int aggressionDistance;
 
 	//current to seek
 	private Vector3 target;
@@ -18,9 +18,30 @@ public class AIShipAgent : MonoBehaviour {
 	Transform closestShip;
 	float shipDist;
 	
+	private Ship closestShipBehavior;
+	
 	NavMeshAgent nav;
 	
 	public bool debug;
+	
+	/*public enum Upgrade
+	{
+		Speed,
+		MaxGold,
+		AttackPower,
+		Hp,
+		LootingSpeed
+	};*/
+	
+	public enum AggressionLevel
+	{Low, Med, High};
+
+	public AggressionLevel aggressionLevel;
+	
+	private Ship.Upgrade[] upgrades = new Ship.Upgrade[10];
+	private int upgradeIndex = 0;
+	
+	
 	
 	// Use this for initialization
 	void Start () 
@@ -42,6 +63,53 @@ public class AIShipAgent : MonoBehaviour {
 				i++;
 			}
 		}
+		
+		switch(aggressionLevel)
+		{
+			case AggressionLevel.Low:
+				aggressionDistance = 0;
+				upgrades[0] = Ship.Upgrade.LootingSpeed;
+				upgrades[1] = Ship.Upgrade.Speed;
+				upgrades[2] = Ship.Upgrade.MaxGold;
+				upgrades[3] = Ship.Upgrade.LootingSpeed;
+				upgrades[4] = Ship.Upgrade.Speed;
+				upgrades[5] = Ship.Upgrade.MaxGold;
+				upgrades[6] = Ship.Upgrade.Hp;
+				upgrades[7] = Ship.Upgrade.Hp;
+				upgrades[8] = Ship.Upgrade.AttackPower;
+				upgrades[9] = Ship.Upgrade.AttackPower;
+				break;
+			case AggressionLevel.Med:
+				aggressionDistance = 3;
+				upgrades[0] = Ship.Upgrade.Speed;
+				upgrades[1] = Ship.Upgrade.LootingSpeed;
+				upgrades[2] = Ship.Upgrade.MaxGold;
+				upgrades[3] = Ship.Upgrade.Hp;
+				upgrades[4] = Ship.Upgrade.AttackPower;
+				upgrades[5] = Ship.Upgrade.Speed;
+				upgrades[6] = Ship.Upgrade.LootingSpeed;
+				upgrades[7] = Ship.Upgrade.MaxGold;
+				upgrades[8] = Ship.Upgrade.Hp;
+				upgrades[9] = Ship.Upgrade.AttackPower;
+				break;
+			case AggressionLevel.High:
+				aggressionDistance = 20;
+				upgrades[0] = Ship.Upgrade.Speed;
+				upgrades[1] = Ship.Upgrade.AttackPower;
+				upgrades[2] = Ship.Upgrade.MaxGold;
+				upgrades[3] = Ship.Upgrade.Hp;
+				upgrades[4] = Ship.Upgrade.AttackPower;
+				upgrades[5] = Ship.Upgrade.Speed;
+				upgrades[6] = Ship.Upgrade.Hp;
+				upgrades[7] = Ship.Upgrade.MaxGold;
+				upgrades[8] = Ship.Upgrade.AttackPower;
+				upgrades[9] = Ship.Upgrade.AttackPower;
+				break;
+		}
+		
+		nav.speed = 0.75f;
+		
+		BuyUpgrade(true);
 		
 		
 	}
@@ -77,10 +145,10 @@ public class AIShipAgent : MonoBehaviour {
 			if(ship.goldInShip < ship.maxGold)
 			{
 				//if ship is within attack range
-				if(shipDist < aggressionLevel)
+				if(shipDist < aggressionDistance)
 				{
 					//if the island is closer
-					if(Vector3.Distance(lootIsland.position, transform.position) < shipDist)
+					if(Vector3.Distance(lootIsland.position, transform.position) < shipDist && aggressionLevel == AggressionLevel.Med)
 					{
 						target = lootIsland.position;
 						if (debug) print("lootisland");
@@ -90,11 +158,26 @@ public class AIShipAgent : MonoBehaviour {
 					else
 					{
 						//if the closest ship has enough gold to warrant an attack
-						if(closestShip.GetComponent<Ship>().goldInShip >= ship.maxGold - ship.goldInShip)
+						if(closestShipBehavior.goldInShip > 0)
 						{
-							if(debug) print(closestShip.GetComponent<Ship>().goldInShip);
-							target = closestShip.position - (-Vector3.Normalize(transform.position + closestShip.position));
-							if (debug) print("othership");
+							
+							if(closestShipBehavior.state == Ship.State.Looting)
+							{
+								target = closestShip.position - (Vector3.Normalize(closestShip.transform.up));
+							}
+							
+							else
+							{
+								if(Vector3.Distance(transform.position, closestShip.position - closestShip.transform.right) < Vector3.Distance(transform.position, closestShip.position + closestShip.transform.right))
+								{
+									target = closestShip.position - (Vector3.Normalize(closestShip.transform.right));
+								}
+								else
+								{
+									target = closestShip.position + (Vector3.Normalize(closestShip.transform.right));
+								}
+							}
+							
 						}
 						
 						else
@@ -124,6 +207,15 @@ public class AIShipAgent : MonoBehaviour {
 		
 		else if (ship.state == Ship.State.Looting)
 		{
+			if(aggressionLevel == AggressionLevel.High)
+			{
+				if(closestShipBehavior.goldInShip > 0)
+				{
+					nav.speed = ship.maxSpeed *.75f;
+					ship.state = Ship.State.Roaming;
+				}
+			}
+			
 			if(ship.goldInShip < ship.maxGold)
 			{
 				ship.loot();
@@ -131,7 +223,7 @@ public class AIShipAgent : MonoBehaviour {
 			
 			else
 			{
-				nav.speed = 0.5f;
+				nav.speed = ship.maxSpeed*.75f;
 				ship.state = Ship.State.Roaming;
 			}
 		}
@@ -157,7 +249,7 @@ public class AIShipAgent : MonoBehaviour {
 	IEnumerator ResetTarget()
 	{
 		yield return new WaitForSeconds(2);
-		nav.speed = 0.5f;
+		nav.speed = ship.maxSpeed*.75f;
 	}
 	
 	void OnTriggerEnter(Collider hit)
@@ -166,15 +258,25 @@ public class AIShipAgent : MonoBehaviour {
 		{
 			ship.state = Ship.State.Looting;
 			nav.speed = 0;
+			nav.velocity = new Vector3(0,0,0);
 		}
 		
 		if(hit.transform == ship.harbor)
 		{
 			if(ship.goldInShip > 0)
 			{
+				
+
+				nav.velocity = new Vector3(0,0,0);
 				ship.goldInHarbor += ship.goldInShip;
 				ship.goldTotal += ship.goldInShip;//this variable keeps track of total gold collected, so it is never decreased by upgrade purchases
 				ship.goldInShip = 0;
+				
+				while(ship.goldInHarbor >= 100 && upgradeIndex < 10)
+				{
+					BuyUpgrade(false);
+				}
+				
 				ship.state = Ship.State.Roaming;
 				target = lootIsland.position;
 				//ship.state = Ship.State.Shopping;
@@ -182,21 +284,6 @@ public class AIShipAgent : MonoBehaviour {
 		}
 
 	}
-	
-	/*void OnTriggerStay(Collider hit)
-	{
-		if(hit.transform == ship.harbor)
-		{
-			if(ship.goldInShip > 0)
-			{
-				if(ship.state == Ship.State.Roaming)
-				{
-					print(transform.name + " " + ship.goldInShip);
-					StartCoroutine(Deposit());
-				}
-			}
-		}
-	}*/
 	
 	void GetClosestShip()
 	{
@@ -213,6 +300,7 @@ public class AIShipAgent : MonoBehaviour {
 		}
 		
 		closestShip = enemyShips[i];
+		closestShipBehavior = enemyShips[i].GetComponent<Ship>();
 		shipDist = d;	
 		
 	}
@@ -225,6 +313,44 @@ public class AIShipAgent : MonoBehaviour {
 		print(transform.name + " " + ship.goldInShip);
 		ship.state = Ship.State.Roaming;
 		target = lootIsland.position;
+	}
+	
+	void BuyUpgrade(bool beginning)
+	{
+
+		if(beginning)
+			StartCoroutine("WaitUpgrade");
+		
+		else
+		{
+			ship.upgrade(upgrades[upgradeIndex]);
+			ship.goldInHarbor-=100;
+			
+			if(upgrades[upgradeIndex] == Ship.Upgrade.Speed)
+			{
+				nav.speed = ship.maxSpeed*.75f;
+			}
+			
+			print(transform.name + "bought " + upgrades[upgradeIndex]);
+			
+			upgradeIndex++;
+		}
+	}
+	
+	IEnumerator WaitUpgrade()
+	{
+		yield return new WaitForEndOfFrame();
+		ship.upgrade(upgrades[upgradeIndex]);
+		ship.goldInHarbor-=100;
+		
+		if(upgrades[upgradeIndex] == Ship.Upgrade.Speed)
+		{
+			nav.speed = ship.maxSpeed*.75f;
+		}
+		
+		print(transform.name + "bought " + upgrades[upgradeIndex]);
+		
+		upgradeIndex++;
 	}
 
 
