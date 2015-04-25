@@ -92,21 +92,8 @@ public class gameTimer : MonoBehaviour {
 
 
 	public void endGame ()
-	{
-		string points = "\nPlayer Ship: " + playerShip.goldTotal + "\nRed Ship: " + redShip.goldTotal
-			+ "\nPurple Ship: " + purpleShip.goldTotal + "\nYellow Ship: " + yellowShip.goldTotal;
-
-		if (playerShip.goldTotal == maxGold(playerShip, redShip, purpleShip, yellowShip))
-		{
-			scoreText.text = "You Won!\n";
-		}
-		else
-		{
-			scoreText.text = "You Lost!\n";
-		}
-
-		scoreText.text += points;
-
+	{		
+		scoreText.text = redShip.goldTotal+","+playerShip.goldTotal+","+yellowShip.goldTotal+","+purpleShip.goldTotal;
 		DontDestroyOnLoad(scoreText.transform.parent);
 
 		Application.LoadLevel("endscene");
