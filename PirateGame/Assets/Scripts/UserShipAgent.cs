@@ -116,7 +116,7 @@ public class UserShipAgent : MonoBehaviour {
 		else if (ship.state == Ship.State.Waiting) 
 		{
 			//listen for space where user wants to start looting or shopping
-			if (Input.GetKeyUp(KeyCode.Space))
+			if (curhit != null && Input.GetKeyUp(KeyCode.Space))
 			{
 				//start looting
 				if (curhit.name.Equals(island.name))
