@@ -122,6 +122,7 @@ public class AIShipAgent : MonoBehaviour {
 						
 		//if roaming
 		if (ship.state == Ship.State.Roaming && !ship.gamePaused) {
+
 			RaycastHit hit;
 			if (Physics.Raycast (transform.position, transform.right, out hit, 1)) {
 				if (hit.transform.gameObject.layer == 8) {
@@ -183,6 +184,7 @@ public class AIShipAgent : MonoBehaviour {
 			nav.destination = target;
 		} 
 		else if (ship.state == Ship.State.Looting) {
+
 			if (aggressionLevel == AggressionLevel.High) {
 				if (closestShipBehavior.goldInShip > 0) {
 					nav.speed = ship.maxSpeed * .75f;
@@ -208,8 +210,8 @@ public class AIShipAgent : MonoBehaviour {
 		//don't let ship move when game pauses while player is shopping
 		if (ship.gamePaused) 
 		{
+			nav.velocity = Vector3.zero;
 			nav.speed = 0;
-			nav.acceleration = 10;
 		}
 		//let player move again in situation where game is unpaused
 		else if (!ship.gamePaused && nav.speed == 0 && !resettingTarget && ship.state == Ship.State.Roaming) 

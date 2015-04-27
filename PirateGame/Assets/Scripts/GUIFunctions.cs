@@ -157,7 +157,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			cannonCount++;
 			ship.goldInHarbor -= 100;
-			ship.goldGUI.updateValue(ship.goldInHarbor);
+			ship.goldGUI.update_Value(ship.goldInHarbor);
 			ship.upgrade (Ship.Upgrade.AttackPower);
 		}		
 		eventSystem.GetComponent<EventSystem>().SetSelectedGameObject(shoppingGUI, null);
@@ -181,7 +181,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			hullCount++;
 			ship.goldInHarbor -= 100;
-			ship.goldGUI.updateValue(ship.goldInHarbor);
+			ship.goldGUI.update_Value(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.Hp);
 		}		
 		eventSystem.GetComponent<EventSystem>().SetSelectedGameObject(shoppingGUI, null);
@@ -205,7 +205,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			sailCount++;
 			ship.goldInHarbor -= 100;
-			ship.goldGUI.updateValue(ship.goldInHarbor);
+			ship.goldGUI.update_Value(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.Speed);
 		}		
 		eventSystem.GetComponent<EventSystem>().SetSelectedGameObject(shoppingGUI, null);
@@ -228,7 +228,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			crateCount++;
 			ship.goldInHarbor -= 100;
-			ship.goldGUI.updateValue(ship.goldInHarbor);
+			ship.goldGUI.update_Value(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.MaxGold);
 		}		
 		eventSystem.GetComponent<EventSystem>().SetSelectedGameObject(shoppingGUI, null);
@@ -251,7 +251,7 @@ public class GUIFunctions : MonoBehaviour {
 		else {
 			lootRateCount++;
 			ship.goldInHarbor -= 100;
-			ship.goldGUI.updateValue(ship.goldInHarbor);
+			ship.goldGUI.update_Value(ship.goldInHarbor);
 			ship.upgrade(Ship.Upgrade.LootingSpeed);
 		}
 		eventSystem.GetComponent<EventSystem>().SetSelectedGameObject(shoppingGUI, null);

@@ -138,7 +138,7 @@ public class Ship : MonoBehaviour {
 			goldInShip = 0;
 
 			if(goldGUI != null)
-				goldGUI.updateValue(goldInHarbor);
+				goldGUI.update_Value(goldInHarbor);
 		}
 
 		//respawn in harbor if health is zero, lose all gold in ship
@@ -164,7 +164,7 @@ public class Ship : MonoBehaviour {
 			{
 				goldInShip += 25;
 				if(goldGUI != null)
-					goldGUI.updateValue (goldInShip);
+					goldGUI.update_Value (goldInShip);
 			}
 			lootingTime = lootingSpeed;
 		}
@@ -262,7 +262,7 @@ public class Ship : MonoBehaviour {
 
 					if(goldGUI != null)
 					{
-						goldGUI.updateValue(goldInShip);
+						goldGUI.update_Value(goldInShip);
 					}					
 				}				
 			}
@@ -322,7 +322,7 @@ public class Ship : MonoBehaviour {
 
 					if(goldGUI != null)
 					{
-						goldGUI.updateValue(goldInShip);
+						goldGUI.update_Value(goldInShip);
 					}
 				}
 			}

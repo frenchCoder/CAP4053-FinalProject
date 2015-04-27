@@ -8,24 +8,33 @@ public class GoldScript : MonoBehaviour
 	private GameObject GoldCoinShip;
 	private GameObject GoldCoinHarbor;
 	private GameObject GoldBarText;
+	private Ship ship;
 	// Use this for initialization7
 	void Start () 
 	{
+		ship = GameObject.Find("PlayerShip").GetComponent<Ship>();
 		state = GoldScript.State.Harbor;
 		GoldCoinShip = (GameObject)GameObject.Find("ShipCoin");
 		GoldCoinShip.SetActive(false);
 		GoldCoinHarbor = (GameObject)GameObject.Find("HarborCoin");
 		GoldBarText = (GameObject)GameObject.Find("GoldBarText");
-		updateValue(100);
+		update_Value(100);
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
-
+		if(state == State.Harbor && !GoldBarText.Equals(""+ship.goldInHarbor))
+		{
+			update_Value (ship.goldInHarbor);
+		}
+		else if(state == State.Ship && !!GoldBarText.Equals(""+ship.goldInShip))
+		{
+			update_Value(ship.goldInShip);
+		}
 	}
 
-	public void updateValue(int value)
+	public void update_Value(int value)
 	{
 		GoldBarText.GetComponent<Text>().text = ""+value;
 	}
@@ -51,7 +60,7 @@ public class GoldScript : MonoBehaviour
 			//GoldCoinShip.GetComponent<Image>().enabled = false;
 			state = State.Harbor;
 		}
-		updateValue (value);
+		update_Value (value);
 	}
 	
 	public enum State{Ship, Harbor};
