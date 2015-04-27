@@ -187,8 +187,7 @@ public class Ship : MonoBehaviour {
 				leftCannon.attackPower++;
 				rightCannon.attackPower++;
 				break;
-			case Upgrade.Hp:
-				//TODO: fix this, altho getting rid of this if statement fixed everything
+			case Upgrade.Hp:				
 				if(healthBar != null)
 				{
 					healthBar.updateMaxHealth();
