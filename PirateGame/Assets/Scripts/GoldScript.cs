@@ -16,7 +16,7 @@ public class GoldScript : MonoBehaviour
 		GoldCoinShip.SetActive(false);
 		GoldCoinHarbor = (GameObject)GameObject.Find("HarborCoin");
 		GoldBarText = (GameObject)GameObject.Find("GoldBarText");
-		updateValue(0);
+		updateValue(100);
 	}
 	
 	// Update is called once per frame
