@@ -9,7 +9,7 @@ public class gameTimer : MonoBehaviour {
 	private float totalGameTime, startTime;
 	public Text timerText;
 	private bool gameOver;
-	private bool gameStarted;
+	private bool gamePaused;
 
 	private Text scoreText;
 
@@ -23,7 +23,7 @@ public class gameTimer : MonoBehaviour {
 	{
 		totalGameTime = timer = 120.0f;
 		gameOver = false;
-		gameStarted = false;
+		gamePaused = true;
 
 		//init score text and make invisible
 		scoreText = GameObject.Find ("ScoreText").GetComponent<Text> ();
@@ -45,21 +45,31 @@ public class gameTimer : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-		if (!gameOver && gameStarted)
+		if (!gameOver && !gamePaused)
 		{
 			runTimer();
+
+			//game timer stops when player has entered shop 
+			if (playerShip.state == Ship.State.Shopping)
+			{
+				gamePaused = true;
+				redShip.gamePaused = true;
+				purpleShip.gamePaused = true;
+				yellowShip.gamePaused = true;
+				playerShip.gamePaused = true;
+			}
 		}
-		else if(!gameStarted)
+		else if(gamePaused)
 		{
-			//game timer starts when player has exited shop first time
+			//game timer starts when player has exited shop 
 			if (playerShip.state == Ship.State.Roaming)
 			{
-				gameStarted = true;
-				redShip.gameStarted = true;
-				purpleShip.gameStarted = true;
-				yellowShip.gameStarted = true;
-				playerShip.gameStarted = true;
-				startTime = Time.realtimeSinceStartup;
+				gamePaused = false;
+				redShip.gamePaused = false;
+				purpleShip.gamePaused = false;
+				yellowShip.gamePaused = false;
+				playerShip.gamePaused = false;
+				startTime = Time.realtimeSinceStartup - (totalGameTime-timer);
 			}
 		}
 		else 

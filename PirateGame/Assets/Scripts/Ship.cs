@@ -53,7 +53,7 @@ public class Ship : MonoBehaviour {
 	private bool canShootLeft;
 	private bool canShootRight;
 
-	public bool gameStarted = false;
+	public bool gamePaused = true;
 
 	//states a ship can be in at any time
 	public enum State

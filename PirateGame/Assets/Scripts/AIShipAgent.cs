@@ -41,7 +41,7 @@ public class AIShipAgent : MonoBehaviour {
 	private Ship.Upgrade[] upgrades = new Ship.Upgrade[10];
 	private int upgradeIndex = 0;
 	
-	
+	private bool resettingTarget = false;//only modified in ResetTarget() when ship is respawning
 	
 	// Use this for initialization
 	void Start () 
@@ -119,137 +119,111 @@ public class AIShipAgent : MonoBehaviour {
 	{
 		
 		GetClosestShip();
-		
+						
 		//if roaming
-		if (ship.state == Ship.State.Roaming && ship.gameStarted) 
-		{
+		if (ship.state == Ship.State.Roaming && !ship.gamePaused) {
 			RaycastHit hit;
-			if(Physics.Raycast(transform.position, transform.right, out hit, 1))
-			{
-				if(hit.transform.gameObject.layer == 8)
-				{
-					ship.attack("R");
+			if (Physics.Raycast (transform.position, transform.right, out hit, 1)) {
+				if (hit.transform.gameObject.layer == 8) {
+					ship.attack ("R");
 				}
-			}
-			
-			else if(Physics.Raycast(transform.position, -transform.right, out hit, 1))
-			{
-				if(hit.transform.gameObject.layer == 8)
-				{
-					ship.attack("L");
+			} else if (Physics.Raycast (transform.position, -transform.right, out hit, 1)) {
+				if (hit.transform.gameObject.layer == 8) {
+					ship.attack ("L");
 				}
-			}
-				
+			}				
 			
 			//if able to get gold
-			if(ship.goldInShip < ship.maxGold)
-			{
+			if (ship.goldInShip < ship.maxGold) {
 				//if ship is within attack range
-				if(shipDist < aggressionDistance)
-				{
+				if (shipDist < aggressionDistance) {
 					//if the island is closer
-					if(Vector3.Distance(lootIsland.position, transform.position) < shipDist && aggressionLevel == AggressionLevel.Med)
-					{
+					if (Vector3.Distance (lootIsland.position, transform.position) < shipDist && aggressionLevel == AggressionLevel.Med) {
 						target = lootIsland.position;
-						if (debug) print("lootisland");
+						if (debug)
+							print ("lootisland");
 					}
 				
 					//if an opposing ship is closer
-					else
-					{
+					else {
 						//if the closest ship has enough gold to warrant an attack
-						if(closestShipBehavior.goldInShip > 0)
-						{
+						if (closestShipBehavior.goldInShip > 0) {
 							
-							if(closestShipBehavior.state == Ship.State.Looting)
-							{
-								target = closestShip.position - (Vector3.Normalize(closestShip.transform.up));
-							}
-							
-							else
-							{
-								if(Vector3.Distance(transform.position, closestShip.position - closestShip.transform.right) < Vector3.Distance(transform.position, closestShip.position + closestShip.transform.right))
-								{
-									target = closestShip.position - (Vector3.Normalize(closestShip.transform.right));
-								}
-								else
-								{
-									target = closestShip.position + (Vector3.Normalize(closestShip.transform.right));
+							if (closestShipBehavior.state == Ship.State.Looting) {
+								target = closestShip.position - (Vector3.Normalize (closestShip.transform.up));
+							} else {
+								if (Vector3.Distance (transform.position, closestShip.position - closestShip.transform.right) < Vector3.Distance (transform.position, closestShip.position + closestShip.transform.right)) {
+									target = closestShip.position - (Vector3.Normalize (closestShip.transform.right));
+								} else {
+									target = closestShip.position + (Vector3.Normalize (closestShip.transform.right));
 								}
 							}
 							
-						}
-						
-						else
-						{
+						} else {
 							target = lootIsland.position;
 						}
 					}
 				}
 				
 				//if ship is not within agression level then go for the island
-				else
-				{
+				else {
 					target = lootIsland.position;
-					if (debug) print("lootisland");
+					if (debug)
+						print ("lootisland");
 				}
 			}
 			
 			//return to island when ship is full
-			else
-			{
+			else {
 				target = ship.harbor.position;
-				if (debug) print("harbor");
+				if (debug)
+					print ("harbor");
 			}
 			
 			nav.destination = target;
-		}
-		
-		else if (ship.state == Ship.State.Looting)
-		{
-			if(aggressionLevel == AggressionLevel.High)
-			{
-				if(closestShipBehavior.goldInShip > 0)
-				{
-					nav.speed = ship.maxSpeed *.75f;
+		} 
+		else if (ship.state == Ship.State.Looting) {
+			if (aggressionLevel == AggressionLevel.High) {
+				if (closestShipBehavior.goldInShip > 0) {
+					nav.speed = ship.maxSpeed * .75f;
 					ship.state = Ship.State.Roaming;
 				}
 			}
 			
-			if(ship.goldInShip < ship.maxGold)
-			{
-				ship.loot();
-			}
-			
-			else
-			{
-				nav.speed = ship.maxSpeed*.75f;
+			if (ship.goldInShip < ship.maxGold) {
+				ship.loot ();
+			} 
+			else {
+				nav.speed = ship.maxSpeed * .75f;
 				ship.state = Ship.State.Roaming;
 			}
 		}
-		
-		else if (ship.state == Ship.State.Shopping)
-		{
-			//TODO: Upgrade code goes here
-			//ship.state = Ship.State.Roaming;
-			//target = lootIsland.position;
-			
-		}
-		
+
 		//don't let ship move when it is dying and respawning
-		else if (ship.state == Ship.State.Dying)
+		else if (ship.state == Ship.State.Dying) {
+			nav.speed = 0;
+			StartCoroutine (ResetTarget ());
+		} 
+
+		//don't let ship move when game pauses while player is shopping
+		if (ship.gamePaused) 
 		{
 			nav.speed = 0;
-			StartCoroutine(ResetTarget());
 		}
-		
-		
+		//let player move again in situation where game is unpaused
+		else if (!ship.gamePaused && nav.speed == 0 && !resettingTarget && ship.state == Ship.State.Roaming) 
+		{
+			nav.speed = ship.maxSpeed*.75f;
+		}
+				
 	}
-	
+		
 	IEnumerator ResetTarget()
 	{
+		resettingTarget = true;
 		yield return new WaitForSeconds(2);
 		nav.speed = ship.maxSpeed*.75f;
+		resettingTarget = false;
 	}
 	
 	void OnTriggerEnter(Collider hit)
