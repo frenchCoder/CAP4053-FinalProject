@@ -6,7 +6,6 @@ using UnityEngine.EventSystems;
 public class GUIFunctions : MonoBehaviour {
 	Ship ship;
 
-	//TODO: change from public to private and have Start create instances from the prefabs
 	private GameObject lootText;
 	private GameObject harborText;
 	public GameObject lootingGUI;
@@ -145,7 +144,6 @@ public class GUIFunctions : MonoBehaviour {
 		//If the cannons are already maxed out or there's
 		//not enough loot to upgrade it, hide the shop GUI
 		//and show the appropriate message.
-		//TODO: figure out cannon attackpower stuff
 		if (ship.leftCannon.attackPower == 3) {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);
@@ -194,7 +192,6 @@ public class GUIFunctions : MonoBehaviour {
 		//If the sails are already maxed out or there's
 		//not enough loot to upgrade it, hide the shop GUI
 		//and show the appropriate message.
-		//TODO: change speed value to compare to
 		if (ship.maxSpeed == 3) {
 			shoppingGUI.SetActive(false);
 			maxMessage.SetActive(true);

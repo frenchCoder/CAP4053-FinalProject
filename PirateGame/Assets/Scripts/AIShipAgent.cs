@@ -209,11 +209,13 @@ public class AIShipAgent : MonoBehaviour {
 		if (ship.gamePaused) 
 		{
 			nav.speed = 0;
+			nav.acceleration = 10;
 		}
 		//let player move again in situation where game is unpaused
 		else if (!ship.gamePaused && nav.speed == 0 && !resettingTarget && ship.state == Ship.State.Roaming) 
 		{
 			nav.speed = ship.maxSpeed*.75f;
+			nav.acceleration = 1;
 		}
 				
 	}
